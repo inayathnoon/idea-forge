@@ -236,6 +236,7 @@ MCP github -> create_pull_request:
     Closes {issue.identifier}
   - head: {branch-name}
   - base: main
+  - labels: ["symphony", "auto-merge"]
 ```
 
 ### Step 8 — Move to Merging
@@ -282,13 +283,23 @@ Iterate until:
 - All review comments are addressed
 - No conflicts
 
-### Step 11 — Merge
+### Step 11 — Auto-Merge or Move to Done
 
+PRs labeled "symphony" auto-merge when all gates pass (CI green, reviewer approved, no conflicts). No manual action needed.
+
+Check merge status:
+```bash
+# Wait up to 10 minutes for auto-merge
+for i in {1..60}; do
+  if ! gh pr view {pr_number} --json state | grep -q "OPEN"; then
+    echo "✓ PR auto-merged"
+    break
+  fi
+  sleep 10
+done
 ```
-MCP github -> merge_pull_request:
-  - pull_number: {pr_number}
-  - merge_method: squash
-```
+
+Once merged (or if auto-merge doesn't apply):
 
 ```
 MCP linear -> save_issue:

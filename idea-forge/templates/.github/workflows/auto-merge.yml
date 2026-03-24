@@ -1,0 +1,107 @@
+name: Auto-Merge
+
+on:
+  pull_request_review:
+    types: [submitted]
+  check_suite:
+    types: [completed]
+  pull_request:
+    types: [labeled, synchronize]
+
+permissions:
+  pull-requests: write
+  contents: write
+
+jobs:
+  auto-merge:
+    runs-on: ubuntu-latest
+    if: contains(github.event.pull_request.labels.*.name, 'symphony') || contains(github.event.pull_request.labels.*.name, 'auto-merge')
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check PR status
+        id: pr-check
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          # Get PR info
+          PR_INFO=$(gh pr view "$PR_NUMBER" --json mergeable,reviewDecision,statusCheckRollup)
+          MERGEABLE=$(echo "$PR_INFO" | jq -r '.mergeable')
+          REVIEW_DECISION=$(echo "$PR_INFO" | jq -r '.reviewDecision')
+
+          echo "mergeable=$MERGEABLE" >> $GITHUB_OUTPUT
+          echo "review_decision=$REVIEW_DECISION" >> $GITHUB_OUTPUT
+
+          # Check if all checks are passing
+          CHECKS=$(gh pr checks "$PR_NUMBER" --json name,status)
+          FAILED_CHECKS=$(echo "$CHECKS" | jq '[.[] | select(.status != "PASS")] | length')
+
+          echo "failed_checks=$FAILED_CHECKS" >> $GITHUB_OUTPUT
+
+          # Check for pending changes requested
+          REVIEWS=$(gh pr reviews "$PR_NUMBER" --json state)
+          CHANGES_REQUESTED=$(echo "$REVIEWS" | jq '[.[] | select(.state == "CHANGES_REQUESTED")] | length')
+
+          echo "changes_requested=$CHANGES_REQUESTED" >> $GITHUB_OUTPUT
+
+      - name: Auto-merge if all gates pass
+        if: |
+          steps.pr-check.outputs.mergeable == 'MERGEABLE' &&
+          (steps.pr-check.outputs.review_decision == 'APPROVED' ||
+           steps.pr-check.outputs.review_decision == 'APPROVED_WITH_CHANGES') &&
+          steps.pr-check.outputs.failed_checks == '0' &&
+          steps.pr-check.outputs.changes_requested == '0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          echo "✅ All gates passed. Auto-merging PR #$PR_NUMBER"
+
+          # Merge with squash and delete branch
+          gh pr merge "$PR_NUMBER" \
+            --squash \
+            --admin \
+            --delete-branch
+
+          # Add comment
+          gh pr comment "$PR_NUMBER" \
+            --body "🤖 Auto-merged by harness. All validation gates passed:
+          - ✅ CI checks: passing
+          - ✅ Reviewer approval: approved
+          - ✅ No merge conflicts
+          - ✅ No pending changes requested"
+
+      - name: Report status
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          MERGEABLE: ${{ steps.pr-check.outputs.mergeable }}
+          REVIEW_DECISION: ${{ steps.pr-check.outputs.review_decision }}
+          FAILED_CHECKS: ${{ steps.pr-check.outputs.failed_checks }}
+          CHANGES_REQUESTED: ${{ steps.pr-check.outputs.changes_requested }}
+        run: |
+          echo "## PR Auto-Merge Status"
+          echo ""
+          echo "**PR #$PR_NUMBER**"
+          echo "- Mergeable: $MERGEABLE"
+          echo "- Review Decision: $REVIEW_DECISION"
+          echo "- Failed Checks: $FAILED_CHECKS"
+          echo "- Changes Requested: $CHANGES_REQUESTED"
+          echo ""
+
+          if [[ "$MERGEABLE" == "MERGEABLE" ]] && \
+             [[ ("$REVIEW_DECISION" == "APPROVED" || "$REVIEW_DECISION" == "APPROVED_WITH_CHANGES") ]] && \
+             [[ "$FAILED_CHECKS" == "0" ]] && \
+             [[ "$CHANGES_REQUESTED" == "0" ]]; then
+            echo "✅ Ready for auto-merge"
+          else
+            echo "⏳ Waiting for all gates to pass"
+            [[ "$MERGEABLE" != "MERGEABLE" ]] && echo "  - ⏳ Waiting for mergeable status"
+            [[ "$REVIEW_DECISION" != "APPROVED" && "$REVIEW_DECISION" != "APPROVED_WITH_CHANGES" ]] && echo "  - ⏳ Waiting for approval"
+            [[ "$FAILED_CHECKS" != "0" ]] && echo "  - ❌ $FAILED_CHECKS check(s) failing"
+            [[ "$CHANGES_REQUESTED" != "0" ]] && echo "  - ⏳ Waiting for requested changes to be addressed"
+          fi
