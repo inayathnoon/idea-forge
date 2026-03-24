@@ -1,0 +1,29 @@
+LearnBridge — Direction Exploration
+Date: 2026-03-02
+
+ORIGINAL IDEA
+Children studying alone (CBSE 5th, ~10–11 years) get stuck on algebra. Parents are unavailable during study hours. App detects stuck signals, nudges the child, then alerts the parent with guided coaching prompts.
+
+10 DIRECTIONS EXPLORED
+1. Direct-to-Consumer B2C Subscription — Web + iOS parent app, monthly subscription
+2. B2B School License — Sell to schools, teachers get alerts
+3. WhatsApp-Native Parent Alerts — No iOS app, alerts via WhatsApp ← SELECTED
+4. AI Tutor (No Parent Loop) — AI helps child directly, no parent needed
+5. Tuition Center White-Label — B2B2C via coaching institutes
+6. Full CBSE Curriculum Platform — All subjects, grades 1–8
+7. Gamified Peer Learning — Social layer, badges, leaderboards
+8. Offline-First Regional Language App — Rural India, SMS alerts
+9. YouTube + Parent Community — Free content, paid community app
+10. Parenting Confidence Platform — Product primarily for parents
+
+TOP 3 CONSIDERED
+- Direction 1: B2C Subscription (closest to original vision)
+- Direction 3: WhatsApp Alerts (lowest friction for parents in India)
+- Direction 4: AI Tutor (different product philosophy)
+
+SELECTED
+Direction 3 — WhatsApp-Native Parent Alerts
+User chose this for lower adoption friction. WhatsApp is near-universal in India. No iOS install required.
+
+FOLDER
+idea_storage/learnbridge-20260302/direction-whatsapp-alerts/

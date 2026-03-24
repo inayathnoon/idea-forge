@@ -1,0 +1,72 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+\addtolength{\oddsidemargin}{-0.5in}
+\addtolength{\evensidemargin}{-0.5in}
+\addtolength{\textwidth}{1in}
+\addtolength{\topmargin}{-.5in}
+\addtolength{\textheight}{1.0in}
+
+\urlstyle{same}
+
+\raggedbottom
+\raggedright
+\setlength{\tabcolsep}{0in}
+
+\titleformat{\section}{
+  \vspace{-4pt}\scshape\raggedright\large
+}{}{0em}{}[\color{black}\titlerule \vspace{-5pt}]
+
+\begin{document}
+
+%----------HEADING-----------------
+\begin{center}
+    \textbf{\Huge \scshape {{ user.name }}} \\ \vspace{1pt}
+    \small {{ user.phone }} $|$ \href{mailto:{{ user.email }}}{ {{ user.email }} } 
+    {% if user.linkedin_url %} $|$ \href{ {{ user.linkedin_url }} }{LinkedIn} {% endif %}
+    {% if user.github_url %} $|$ \href{ {{ user.github_url }} }{GitHub} {% endif %}
+\end{center}
+
+
+%-----------EDUCATION-----------------
+\section{Education}
+  \begin{itemize}[leftmargin=*]
+    {% for edu in user.education %}
+      \item
+        \textbf{ {{ edu.institution }} } \hfill {{ edu.start_date }} -- {{ edu.end_date }} \\
+        \textit{ {{ edu.degree }} }
+    {% endfor %}
+  \end{itemize}
+
+
+%-----------EXPERIENCE-----------------
+\section{Experience}
+  \begin{itemize}[leftmargin=*]
+    {% for exp in user.experience %}
+      \item
+        \textbf{ {{ exp.company }} } \hfill {{ exp.start_date }} -- {{ exp.end_date }} \\
+        \textit{ {{ exp.title }} }
+        \begin{itemize}
+            \item {{ exp.description }}
+        \end{itemize}
+    {% endfor %}
+  \end{itemize}
+
+%-----------SKILLS-----------------
+\section{Skills}
+ \begin{itemize}[leftmargin=*]
+    \item \textbf{Skills}{: {{ user.skills | join(', ') }} }
+ \end{itemize}
+
+\end{document}

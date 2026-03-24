@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "IdeaForge Snapshot Manifest",
+  "description": "Audit trail of all state snapshots created before agent runs. Use this to list available restore points and understand the timeline of idea development.",
+  "type": "object",
+  "properties": {
+    "snapshots": {
+      "type": "array",
+      "description": "Ordered list of snapshots (newest last)",
+      "items": {
+        "type": "object",
+        "properties": {
+          "snapshot_id": {
+            "type": "string",
+            "description": "Unique identifier in format {stage}-{YYYYMMDD-HHmmss}",
+            "pattern": "^[0-9]-[0-9]{8}-[0-9]{6}$"
+          },
+          "idea_slug": {
+            "type": "string",
+            "description": "Which idea was snapshotted (e.g., 'learnbridge')"
+          },
+          "stage": {
+            "type": "integer",
+            "description": "Pipeline stage about to run (1-9)",
+            "minimum": 1,
+            "maximum": 9
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO 8601 timestamp when snapshot was created"
+          },
+          "description": {
+            "type": "string",
+            "description": "Optional human-readable context (e.g., 'Before idea-explorer-2 generates directions')"
+          },
+          "path": {
+            "type": "string",
+            "description": "Path to snapshot directory relative to project root"
+          },
+          "files_backed_up": {
+            "type": "integer",
+            "description": "Number of files in the snapshot"
+          }
+        },
+        "required": ["snapshot_id", "idea_slug", "stage", "timestamp", "path", "files_backed_up"]
+      }
+    }
+  },
+  "required": ["snapshots"]
+}

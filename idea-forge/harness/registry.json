@@ -1,0 +1,234 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "IdeaForge Component Registry",
+  "description": "Machine-readable registry of all agents and skills. Auto-generated from component frontmatter. Lists capabilities, inputs, outputs, dependencies, and metadata. State machine is defined in harness/pipeline.json (single source of truth).",
+  "generated_at": "2026-03-24T13:24:00Z",
+  "agents": [
+    {
+      "name": "idea-capturer-1",
+      "stage": 1,
+      "description": "Captures a raw idea and turns it into a structured project spec",
+      "max_iterations": 5,
+      "inputs": [],
+      "outputs": ["memory/ideas_store.json"],
+      "skills": ["ask-questions", "save-idea"],
+      "tools": [],
+      "depends_on": [],
+      "pre_conditions": [],
+      "post_conditions": ["memory/ideas_store.json contains new idea with stage=structured"]
+    },
+    {
+      "name": "idea-explorer-2",
+      "stage": 2,
+      "description": "Explores 10 directions for an idea, picks top 3, lets user choose",
+      "max_iterations": 5,
+      "inputs": ["memory/ideas_store.json"],
+      "outputs": ["idea_storage/{slug}-{timestamp}/"],
+      "skills": ["elaborate", "ask-questions", "explore-directions", "create-idea-storage-folder"],
+      "tools": [],
+      "depends_on": ["idea-capturer"],
+      "pre_conditions": ["memory/ideas_store.json contains idea with stage=structured"],
+      "post_conditions": ["idea_storage/{slug}-{timestamp}/ exists with direction files"]
+    },
+    {
+      "name": "strategist-3",
+      "stage": 3,
+      "description": "Stress-tests a structured idea across 4 dimensions and decides if it's ready to build",
+      "max_iterations": 5,
+      "inputs": ["memory/ideas_store.json"],
+      "outputs": ["memory/ideas_store.json"],
+      "skills": ["load-idea", "review-dimensions", "save-review"],
+      "tools": [],
+      "depends_on": ["idea-explorer"],
+      "pre_conditions": ["memory/ideas_store.json contains idea with direction chosen"],
+      "post_conditions": ["memory/ideas_store.json contains review with verdict (approved/revise/reject)"]
+    },
+    {
+      "name": "researcher-4",
+      "stage": 4,
+      "description": "Researches competitors, market signals, and validation before the PRD",
+      "max_iterations": 5,
+      "inputs": ["memory/ideas_store.json", "docs/{idea.name}/DECISIONS.md"],
+      "outputs": ["docs/PRODUCT_SENSE.md"],
+      "skills": [],
+      "tools": ["WebSearch"],
+      "depends_on": ["strategist"],
+      "pre_conditions": ["review verdict = approved"],
+      "post_conditions": ["docs/PRODUCT_SENSE.md updated with market research findings"]
+    },
+    {
+      "name": "prd-writer-5",
+      "stage": 5,
+      "description": "Turns a structured idea + review into a buildable PRD",
+      "max_iterations": 5,
+      "inputs": ["memory/ideas_store.json", "docs/PRODUCT_SENSE.md"],
+      "outputs": ["docs/product-specs/mvp.md", "docs/product-specs/index.md"],
+      "skills": ["clarify-before-write"],
+      "tools": [],
+      "depends_on": ["researcher"],
+      "pre_conditions": ["docs/PRODUCT_SENSE.md exists"],
+      "post_conditions": ["docs/product-specs/mvp.md exists", "docs/product-specs/index.md updated with MVP spec entry"]
+    },
+    {
+      "name": "arch-writer-6",
+      "stage": 6,
+      "description": "Reads the PRD and designs the system architecture",
+      "max_iterations": 5,
+      "inputs": ["docs/product-specs/mvp.md", "memory/ideas_store.json"],
+      "outputs": ["ARCHITECTURE.md"],
+      "skills": ["clarify-before-write"],
+      "tools": [],
+      "depends_on": ["prd-writer"],
+      "pre_conditions": ["docs/product-specs/mvp.md exists"],
+      "post_conditions": ["ARCHITECTURE.md exists at repository root"]
+    },
+    {
+      "name": "plan-writer-7",
+      "stage": 7,
+      "description": "Breaks PRD + Architecture into a phased, realistic build plan",
+      "max_iterations": 5,
+      "inputs": ["docs/product-specs/mvp.md", "ARCHITECTURE.md"],
+      "outputs": ["docs/exec-plans/active/mvp-build-plan.md"],
+      "skills": ["clarify-before-write"],
+      "tools": [],
+      "depends_on": ["arch-writer"],
+      "pre_conditions": ["ARCHITECTURE.md exists"],
+      "post_conditions": ["docs/exec-plans/active/mvp-build-plan.md exists"]
+    },
+    {
+      "name": "build-orchestrator-8",
+      "stage": 8,
+      "description": "Creates GitHub repo and pushes all planning docs + conductor system",
+      "max_iterations": 5,
+      "inputs": ["memory/ideas_store.json", "docs/product-specs/mvp.md", "ARCHITECTURE.md", "docs/exec-plans/active/mvp-build-plan.md", "docs/design-docs/ (decision documents)"],
+      "outputs": ["GitHub repository"],
+      "skills": ["save-built-state"],
+      "tools": ["MCP github"],
+      "depends_on": ["plan-writer"],
+      "pre_conditions": ["review verdict = approved", "docs/{idea.name}/BUILD_PLAN.md exists"],
+      "post_conditions": ["GitHub repo created and populated", "memory/ideas_store.json has stage=built and github_url"]
+    },
+    {
+      "name": "project-manager",
+      "stage": "cross-cutting",
+      "description": "Captures key decisions incrementally after each pipeline stage",
+      "max_iterations": 5,
+      "inputs": ["memory/ideas_store.json", "docs/product-specs/mvp.md", "ARCHITECTURE.md", "docs/exec-plans/active/mvp-build-plan.md"],
+      "outputs": ["docs/design-docs/ (multiple decision documents)"],
+      "skills": [],
+      "tools": [],
+      "depends_on": [],
+      "pre_conditions": [],
+      "post_conditions": ["docs/design-docs/ contains individual decision documents for each major choice"]
+    }
+  ],
+  "skills": [
+    {
+      "name": "ask-questions",
+      "description": "Generates 5–7 clarifying questions to understand what the user is talking about",
+      "metadata": {
+        "inputs": [],
+        "outputs": [],
+        "side_effects": [],
+        "called_by": ["idea-capturer", "idea-explorer"]
+      }
+    },
+    {
+      "name": "clarify-before-write",
+      "description": "Asks clarifying questions before writing docs to ensure alignment with user intent",
+      "metadata": {
+        "inputs": [],
+        "outputs": [],
+        "side_effects": [],
+        "called_by": ["prd-writer", "arch-writer", "plan-writer"]
+      }
+    },
+    {
+      "name": "create-idea-storage-folder",
+      "description": "Creates the idea_storage/{slug}-{timestamp}/ folder structure for exploration artifacts",
+      "metadata": {
+        "inputs": [],
+        "outputs": [],
+        "side_effects": [],
+        "called_by": ["idea-explorer"]
+      }
+    },
+    {
+      "name": "elaborate",
+      "description": "Expands a brief idea concept into fuller detail across multiple angles",
+      "metadata": {
+        "inputs": [],
+        "outputs": [],
+        "side_effects": [],
+        "called_by": ["idea-explorer"]
+      }
+    },
+    {
+      "name": "explore-directions",
+      "description": "Generates 10 potential directions, filters to top 3, and presents for user selection",
+      "metadata": {
+        "inputs": [],
+        "outputs": [],
+        "side_effects": [],
+        "called_by": ["idea-explorer"]
+      }
+    },
+    {
+      "name": "load-idea",
+      "description": "Loads an idea from memory/ideas_store.json for processing",
+      "metadata": {
+        "inputs": [],
+        "outputs": [],
+        "side_effects": [],
+        "called_by": ["strategist"]
+      }
+    },
+    {
+      "name": "review-dimensions",
+      "description": "Stress-tests an idea across 4 dimensions (clarity, feasibility, differentiation, completeness)",
+      "metadata": {
+        "inputs": [],
+        "outputs": [],
+        "side_effects": [],
+        "called_by": ["strategist"]
+      }
+    },
+    {
+      "name": "save-built-state",
+      "description": "Marks an idea as built and saves the final state to memory/ideas_store.json",
+      "metadata": {
+        "inputs": [],
+        "outputs": [],
+        "side_effects": [],
+        "called_by": ["build-orchestrator"]
+      }
+    },
+    {
+      "name": "save-idea",
+      "description": "Saves a structured idea spec to memory/ideas_store.json",
+      "metadata": {
+        "inputs": [],
+        "outputs": [],
+        "side_effects": [],
+        "called_by": ["idea-capturer"]
+      }
+    },
+    {
+      "name": "save-review",
+      "description": "Saves review verdict and scores to memory/ideas_store.json",
+      "metadata": {
+        "inputs": [],
+        "outputs": [],
+        "side_effects": [],
+        "called_by": ["strategist"]
+      }
+    }
+  ],
+  "statistics": {
+    "total_agents": 9,
+    "pipeline_agents": 8,
+    "cross_cutting_agents": 1,
+    "total_skills": 10,
+    "total_tools_used": 5
+  }
+}

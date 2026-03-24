@@ -1,0 +1,5 @@
+Selected Direction: Direction 3 — WhatsApp-Native Parent Alerts
+
+Reason: Removes the iOS install barrier. WhatsApp penetration in Indian households is near-universal — no app download required for parents. Same stuck-detection core, dramatically lower adoption friction. Potentially faster to ship and easier to get parents onboard.
+
+Status: user-selected

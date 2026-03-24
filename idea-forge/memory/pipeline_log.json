@@ -1,0 +1,129 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "IdeaForge Pipeline Execution Log",
+  "description": "Structured log of all agent runs in the IdeaForge pipeline. Used for debugging, auditing, rollback, and consistency checking.",
+  "type": "object",
+  "properties": {
+    "runs": {
+      "type": "array",
+      "description": "Ordered list of agent run events",
+      "items": {
+        "type": "object",
+        "properties": {
+          "run_id": {
+            "type": "string",
+            "description": "Unique identifier for this run (UUID or timestamp-based)"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO 8601 timestamp when the run started"
+          },
+          "idea_slug": {
+            "type": "string",
+            "description": "Slug of the idea being worked on (e.g., 'learnbridge')"
+          },
+          "agent": {
+            "type": "string",
+            "description": "Name of the agent that ran (e.g., 'idea-capturer-1', 'idea-explorer-2')"
+          },
+          "stage": {
+            "type": "integer",
+            "description": "Pipeline stage number (1-9)"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["started", "completed", "failed", "skipped", "paused"],
+            "description": "Final status of the run"
+          },
+          "input": {
+            "type": "object",
+            "description": "Input data passed to the agent"
+          },
+          "output": {
+            "type": "object",
+            "description": "Output data returned by the agent (null if failed or skipped)"
+          },
+          "decisions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "key": {
+                  "type": "string",
+                  "description": "Decision identifier"
+                },
+                "value": {
+                  "type": "string",
+                  "description": "Decision value or choice made"
+                },
+                "rationale": {
+                  "type": "string",
+                  "description": "Why this decision was made"
+                }
+              }
+            },
+            "description": "Key decisions captured during this run"
+          },
+          "state_before": {
+            "type": "object",
+            "description": "Idea state snapshot before this run"
+          },
+          "state_after": {
+            "type": "object",
+            "description": "Idea state snapshot after this run (null if failed)"
+          },
+          "duration_ms": {
+            "type": "integer",
+            "description": "Milliseconds the run took"
+          },
+          "error": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string"
+              },
+              "stack": {
+                "type": "string"
+              }
+            },
+            "description": "Error details if status is 'failed'"
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Additional context (e.g., session_id, checkpoint references, rollback_snapshot_path)"
+          },
+          "user_feedback": {
+            "type": "object",
+            "description": "User rating and notes on agent output",
+            "properties": {
+              "rating": {
+                "type": "string",
+                "enum": ["thumbs_up", "thumbs_down", "neutral", null],
+                "description": "User reaction to the output (null = not yet provided)"
+              },
+              "notes": {
+                "type": "string",
+                "description": "Freeform user notes on what worked well, what didn't, or suggestions"
+              },
+              "feedback_at": {
+                "type": "string",
+                "format": "date-time",
+                "description": "ISO 8601 timestamp when feedback was submitted"
+              },
+              "improvements_suggested": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Specific improvements user requested"
+              }
+            }
+          }
+        },
+        "required": ["run_id", "timestamp", "idea_slug", "agent", "stage", "status"]
+      }
+    }
+  },
+  "required": ["runs"]
+}

@@ -1,0 +1,243 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "IdeaForge Ideas Store Schema",
+  "description": "Schema for memory/ideas_store.json — defines the structure of captured and processed ideas",
+  "type": "object",
+  "required": ["ideas"],
+  "properties": {
+    "ideas": {
+      "type": "array",
+      "description": "List of all ideas processed through the IdeaForge pipeline",
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "full_name",
+          "problem",
+          "solution",
+          "target_users",
+          "constraints",
+          "created_at"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Slug/identifier for the idea (lowercase, no spaces, e.g., 'learnbridge')",
+            "pattern": "^[a-z0-9-]+$",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "full_name": {
+            "type": "string",
+            "description": "Human-readable full name with optional emoji/tagline (e.g., 'LearnBridge — App-First Learning Companion')",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "problem": {
+            "type": "string",
+            "description": "The problem statement — who has what problem and why it matters",
+            "minLength": 10
+          },
+          "solution": {
+            "type": "string",
+            "description": "The proposed solution — what the app/product does and how it solves the problem",
+            "minLength": 10
+          },
+          "target_users": {
+            "type": "string",
+            "description": "Primary and secondary users — who benefits from this product and how they'll use it",
+            "minLength": 10
+          },
+          "tech_stack": {
+            "type": "object",
+            "description": "Technology choices and stack decisions",
+            "properties": {
+              "language": {
+                "type": "string",
+                "description": "Primary programming language (e.g., 'TypeScript', 'Python')"
+              },
+              "framework": {
+                "type": "string",
+                "description": "Web/app framework (e.g., 'React', 'Django', 'Next.js')"
+              },
+              "database": {
+                "type": "string",
+                "description": "Database choice (e.g., 'PostgreSQL', 'MongoDB')"
+              },
+              "infra": {
+                "type": "string",
+                "description": "Infrastructure/hosting (e.g., 'Vercel', 'AWS', 'GCP')"
+              },
+              "other": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Other key technologies or services"
+              }
+            }
+          },
+          "mvp_features": {
+            "type": "array",
+            "description": "List of MVP features — what's in vs. what's later",
+            "items": {
+              "type": "object",
+              "required": ["title"],
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "description": "Feature name"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "How the feature works and why it's needed"
+                },
+                "priority": {
+                  "type": "string",
+                  "enum": ["high", "medium", "low"],
+                  "description": "Priority for MVP — high features ship in Phase 1"
+                }
+              }
+            }
+          },
+          "success_metrics": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "How we'll measure success — user retention, engagement, revenue, etc."
+          },
+          "constraints": {
+            "type": "string",
+            "description": "Budget, timeline, team, regulatory, or other constraints"
+          },
+          "repo_topics": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "GitHub topics/tags for the repository (e.g., 'edtech', 'react', 'ai')"
+          },
+          "direction": {
+            "type": "object",
+            "description": "Exploration direction chosen (set by idea-explorer agent in stage 'explored')",
+            "properties": {
+              "chosen": {
+                "type": "string",
+                "description": "Title of the chosen direction"
+              },
+              "reasoning": {
+                "type": "string",
+                "description": "Why this direction was selected"
+              }
+            }
+          },
+          "review": {
+            "type": "object",
+            "description": "Review feedback and verdict (set by strategist agent in stage 'reviewed')",
+            "properties": {
+              "verdict": {
+                "type": "string",
+                "enum": ["approved", "revise", "reject"],
+                "description": "Review outcome: approved to build, revise before review, or rejected"
+              },
+              "feedback": {
+                "type": "object",
+                "description": "Feedback across 4 review dimensions",
+                "properties": {
+                  "problem_clarity": {
+                    "type": "string",
+                    "description": "How clear and well-justified is the problem statement?"
+                  },
+                  "market_viability": {
+                    "type": "string",
+                    "description": "Does this market exist? Is it big enough? Are customers willing to pay?"
+                  },
+                  "tech_feasibility": {
+                    "type": "string",
+                    "description": "Can we build this with the stated tech stack? Are there blockers?"
+                  },
+                  "user_validation": {
+                    "type": "string",
+                    "description": "Do users actually want this? What evidence do we have?"
+                  }
+                }
+              }
+            }
+          },
+          "stage": {
+            "type": "string",
+            "enum": [
+              "raw",
+              "captured",
+              "explored",
+              "reviewed",
+              "researched",
+              "prd_written",
+              "arch_written",
+              "plan_written",
+              "built"
+            ],
+            "description": "Pipeline stage — where the idea is in the forging process"
+          },
+          "github_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "GitHub repository URL (set when stage='built')"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO 8601 timestamp when idea was first captured"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO 8601 timestamp of last update"
+          }
+        }
+      }
+    }
+  },
+  "examples": [
+    {
+      "ideas": [
+        {
+          "name": "learnbridge",
+          "full_name": "LearnBridge — App-First Learning Companion",
+          "problem": "Children studying alone struggle when stuck on concepts. Parents are unavailable during study hours.",
+          "solution": "Web app with illustrated step-by-step walkthroughs + quizzes. Detects when child is stuck and alerts parent via WhatsApp.",
+          "target_users": "Primary: Children (CBSE 5th grade). Secondary: Working parents.",
+          "tech_stack": {
+            "language": "TypeScript",
+            "framework": "React",
+            "database": "PostgreSQL via Supabase",
+            "infra": "Vercel + Supabase + WhatsApp API"
+          },
+          "mvp_features": [
+            {
+              "title": "Illustrated Step-by-Step Walkthroughs",
+              "description": "Static illustrated content covering CBSE 5th algebra.",
+              "priority": "high"
+            },
+            {
+              "title": "Adaptive Quiz Engine",
+              "description": "Quizzes after walkthroughs with progression tracking.",
+              "priority": "high"
+            }
+          ],
+          "success_metrics": [
+            "% sessions without parent alert",
+            "Quiz score improvement per topic",
+            "Week-4 retention rate"
+          ],
+          "constraints": "Solo founder, web-only for MVP, CBSE 5th algebra only.",
+          "stage": "built",
+          "github_url": "https://github.com/inayathnoon/learnbridge",
+          "created_at": "2026-03-01T11:12:02Z",
+          "updated_at": "2026-03-02T13:21:00Z"
+        }
+      ]
+    }
+  ]
+}

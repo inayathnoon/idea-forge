@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+# Pre-commit hook: Run make validate-all before allowing commits
+# Ensures structural integrity before code is committed
+# Install with: ln -sf ../../.claude/hooks/pre-commit .git/hooks/pre-commit
+
+set -e
+
+PROJECT_ROOT="$(cd "$(dirname "$0")/../../" && pwd)"
+cd "$PROJECT_ROOT"
+
+echo "🔍 Running pre-commit validation hooks..."
+echo ""
+
+# Run all validations
+if ! make validate-all; then
+  echo ""
+  echo "❌ Validation failed! Commit blocked."
+  echo ""
+  echo "To fix:"
+  echo "  1. Review the validation errors above"
+  echo "  2. Fix the issues in your agents, skills, or pipeline"
+  echo "  3. Run 'make validate-all' to verify"
+  echo "  4. Try committing again"
+  echo ""
+  exit 1
+fi
+
+echo ""
+echo "✅ All validations passed. Commit allowed."
+exit 0

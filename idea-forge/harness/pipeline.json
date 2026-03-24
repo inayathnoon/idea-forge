@@ -1,0 +1,215 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "IdeaForge Pipeline State Machine",
+  "description": "Formal state machine defining pipeline stages, transitions, required artifacts, and the agent responsible for each transition.",
+  "initial_state": "raw",
+  "states": {
+    "raw": {
+      "description": "User has shared a raw idea, nothing structured yet",
+      "artifacts": [],
+      "allowed_transitions": [
+        "captured"
+      ]
+    },
+    "captured": {
+      "description": "Idea has been clarified and saved as a structured spec",
+      "artifacts": [
+        "memory/ideas_store.json#latest(stage=structured)"
+      ],
+      "allowed_transitions": [
+        "explored"
+      ]
+    },
+    "explored": {
+      "description": "10 directions generated, top 3 picked, user chose one",
+      "artifacts": [
+        "idea_storage/{slug}-{timestamp}/overview.txt",
+        "idea_storage/{slug}-{timestamp}/selected.txt"
+      ],
+      "allowed_transitions": [
+        "reviewed"
+      ]
+    },
+    "reviewed": {
+      "description": "Idea stress-tested across 4 dimensions, verdict issued",
+      "artifacts": [
+        "memory/ideas_store.json#latest(review.verdict)"
+      ],
+      "allowed_transitions": [
+        "researched",
+        "captured"
+      ],
+      "gate": {
+        "field": "review.verdict",
+        "approved": "researched",
+        "revise": "captured",
+        "reject": null
+      }
+    },
+    "researched": {
+      "description": "Market research complete — competitors, validation signals, gaps identified",
+      "artifacts": [
+        "docs/PRODUCT_SENSE.md"
+      ],
+      "allowed_transitions": [
+        "prd_written"
+      ]
+    },
+    "prd_written": {
+      "description": "PRD written — problem, users, solution, MVP features, constraints defined",
+      "artifacts": [
+        "docs/product-specs/mvp.md",
+        "docs/product-specs/index.md"
+      ],
+      "allowed_transitions": [
+        "arch_written"
+      ]
+    },
+    "arch_written": {
+      "description": "Architecture designed — components, data flow, tech stack, key decisions",
+      "artifacts": [
+        "ARCHITECTURE.md"
+      ],
+      "allowed_transitions": [
+        "plan_written"
+      ]
+    },
+    "plan_written": {
+      "description": "Build plan created — phases, milestones, dependencies, risks",
+      "artifacts": [
+        "docs/exec-plans/active/mvp-build-plan.md"
+      ],
+      "allowed_transitions": [
+        "built"
+      ]
+    },
+    "built": {
+      "description": "GitHub repo created, all docs and conductor system pushed",
+      "artifacts": [
+        "memory/ideas_store.json#latest(github_url)",
+        "memory/ideas_store.json#latest(stage=built)"
+      ],
+      "allowed_transitions": []
+    }
+  },
+  "transitions": [
+    {
+      "from": "raw",
+      "to": "captured",
+      "agent": "idea-capturer-1",
+      "cross_cutting": [
+        "project-manager"
+      ],
+      "pre_check": [],
+      "post_check": [
+        "memory/ideas_store.json contains new idea with stage=structured"
+      ]
+    },
+    {
+      "from": "captured",
+      "to": "explored",
+      "agent": "idea-explorer-2",
+      "cross_cutting": [
+        "project-manager"
+      ],
+      "pre_check": [
+        "memory/ideas_store.json contains idea with stage=structured"
+      ],
+      "post_check": [
+        "idea_storage/{slug}-{timestamp}/ exists with direction files"
+      ]
+    },
+    {
+      "from": "explored",
+      "to": "reviewed",
+      "agent": "strategist-3",
+      "cross_cutting": [
+        "project-manager"
+      ],
+      "pre_check": [
+        "memory/ideas_store.json contains idea with direction chosen"
+      ],
+      "post_check": [
+        "memory/ideas_store.json contains review with verdict"
+      ]
+    },
+    {
+      "from": "reviewed",
+      "to": "researched",
+      "agent": "researcher-4",
+      "cross_cutting": [
+        "project-manager"
+      ],
+      "pre_check": [
+        "review verdict = approved"
+      ],
+      "post_check": [
+        "docs/PRODUCT_SENSE.md populated with market research"
+      ]
+    },
+    {
+      "from": "researched",
+      "to": "prd_written",
+      "agent": "prd-writer-5",
+      "cross_cutting": [],
+      "pre_check": [
+        "docs/PRODUCT_SENSE.md exists"
+      ],
+      "post_check": [
+        "docs/product-specs/mvp.md exists"
+      ]
+    },
+    {
+      "from": "prd_written",
+      "to": "arch_written",
+      "agent": "arch-writer-6",
+      "cross_cutting": [],
+      "pre_check": [
+        "docs/product-specs/mvp.md exists"
+      ],
+      "post_check": [
+        "ARCHITECTURE.md exists at repository root"
+      ]
+    },
+    {
+      "from": "arch_written",
+      "to": "plan_written",
+      "agent": "plan-writer-7",
+      "cross_cutting": [],
+      "pre_check": [
+        "ARCHITECTURE.md exists"
+      ],
+      "post_check": [
+        "docs/exec-plans/active/mvp-build-plan.md exists"
+      ]
+    },
+    {
+      "from": "plan_written",
+      "to": "built",
+      "agent": "build-orchestrator-8",
+      "cross_cutting": [
+        "project-manager"
+      ],
+      "pre_check": [
+        "review verdict = approved",
+        "docs/exec-plans/active/mvp-build-plan.md exists"
+      ],
+      "post_check": [
+        "GitHub repo created",
+        "memory/ideas_store.json has stage=built and github_url"
+      ]
+    }
+  ],
+  "cross_cutting_agents": {
+    "project-manager": {
+      "description": "Called after transitions to capture key decisions in DECISIONS.md",
+      "called_after": [
+        "raw→captured",
+        "captured→explored",
+        "explored→reviewed",
+        "reviewed→researched",
+        "plan_written→built"
+      ]
+    }
+  }
+}

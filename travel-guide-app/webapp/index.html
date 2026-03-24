@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Guide - Find Your Perfect Tour</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <i class="fas fa-map-marked-alt"></i>
+                <span>Travel Guide</span>
+            </div>
+            <div class="nav-location" id="navLocation">
+                <i class="fas fa-map-marker-alt"></i>
+                <span id="currentCity">Finding your location...</span>
+            </div>
+            <div class="nav-menu">
+                <a href="#home" class="nav-link active" data-section="home">Home</a>
+                <a href="#tours" class="nav-link" data-section="tours">Tours</a>
+                <a href="#experts" class="nav-link" data-section="experts">Experts</a>
+                <a href="#chat" class="nav-link" data-section="chat">AI Chat</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+
+            <!-- Home Section -->
+            <section id="home" class="section active">
+                <!-- Hero Section -->
+                <div class="hero">
+                    <h1>Discover Authentic Local Experiences</h1>
+                    <p>Connect with verified local guides for personalized tours</p>
+                    <button class="btn btn-primary" id="getLocationBtn">
+                        <i class="fas fa-crosshairs"></i> Use My Location
+                    </button>
+                </div>
+
+                <!-- Categories -->
+                <div class="section-header">
+                    <h2>Interested In</h2>
+                </div>
+                <div class="categories-grid" id="categoriesGrid">
+                    <div class="loading">Loading categories...</div>
+                </div>
+
+                <!-- Featured Tours -->
+                <div class="section-header">
+                    <h2>Featured Tours</h2>
+                    <a href="#tours" class="view-all" data-section="tours">View All</a>
+                </div>
+                <div class="tours-carousel" id="featuredTours">
+                    <div class="loading">Loading tours...</div>
+                </div>
+
+                <!-- Expert Guides -->
+                <div class="section-header">
+                    <h2>Expert Guides</h2>
+                    <a href="#experts" class="view-all" data-section="experts">View All</a>
+                </div>
+                <div class="guides-grid" id="expertGuides">
+                    <div class="loading">Loading guides...</div>
+                </div>
+
+                <!-- AI Chat CTA -->
+                <div class="chat-cta">
+                    <div class="chat-cta-content">
+                        <i class="fas fa-robot"></i>
+                        <div>
+                            <h3>Get Personalized Recommendations</h3>
+                            <p>Chat with our AI to find the perfect tour for you</p>
+                        </div>
+                        <button class="btn btn-primary" data-section="chat">
+                            <i class="fas fa-comments"></i> Start Chat
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tours Section -->
+            <section id="tours" class="section">
+                <div class="section-title">
+                    <h1>Explore Tours</h1>
+                    <p>Find the perfect adventure in your destination</p>
+                </div>
+
+                <!-- Search and Filters -->
+                <div class="search-filters">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="tourSearch" placeholder="Search tours...">
+                    </div>
+                    <div class="filters">
+                        <select id="tourTypeFilter">
+                            <option value="">All Types</option>
+                            <option value="food">Food Trip</option>
+                            <option value="bike">Bike Trip</option>
+                            <option value="hike">Hike & Photos</option>
+                            <option value="cultural">Cultural</option>
+                            <option value="adventure">Adventure</option>
+                            <option value="historical">Historical</option>
+                            <option value="nightlife">Nightlife</option>
+                        </select>
+                        <select id="difficultyFilter">
+                            <option value="">All Difficulties</option>
+                            <option value="easy">Easy</option>
+                            <option value="moderate">Moderate</option>
+                            <option value="hard">Hard</option>
+                        </select>
+                        <select id="sortFilter">
+                            <option value="">Sort By</option>
+                            <option value="price_per_person">Price: Low to High</option>
+                            <option value="-price_per_person">Price: High to Low</option>
+                            <option value="duration_hours">Duration: Short to Long</option>
+                            <option value="-created_at">Newest First</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Tours Grid -->
+                <div class="tours-grid" id="toursGrid">
+                    <div class="loading">Loading tours...</div>
+                </div>
+            </section>
+
+            <!-- Experts Section -->
+            <section id="experts" class="section">
+                <div class="section-title">
+                    <h1>Expert Local Guides</h1>
+                    <p>Meet our verified guides with local expertise</p>
+                </div>
+
+                <!-- Search and Filters -->
+                <div class="search-filters">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="guideSearch" placeholder="Search guides...">
+                    </div>
+                    <div class="filters">
+                        <label class="checkbox-filter">
+                            <input type="checkbox" id="verifiedFilter" checked>
+                            <span>Verified Only</span>
+                        </label>
+                        <label class="checkbox-filter">
+                            <input type="checkbox" id="cameraFilter">
+                            <span><i class="fas fa-camera"></i> Has Camera</span>
+                        </label>
+                        <label class="checkbox-filter">
+                            <input type="checkbox" id="carFilter">
+                            <span><i class="fas fa-car"></i> Has Car</span>
+                        </label>
+                        <label class="checkbox-filter">
+                            <input type="checkbox" id="bikeFilter">
+                            <span><i class="fas fa-bicycle"></i> Has Bike</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Guides Grid -->
+                <div class="guides-grid" id="guidesGrid">
+                    <div class="loading">Loading guides...</div>
+                </div>
+            </section>
+
+            <!-- Chat Section -->
+            <section id="chat" class="section">
+                <div class="section-title">
+                    <h1>AI Travel Assistant</h1>
+                    <p>Get personalized tour recommendations</p>
+                </div>
+
+                <div class="chat-container">
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="message bot-message">
+                            <div class="message-avatar">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <div class="message-content">
+                                <p>Hello! I'm your AI travel assistant. Tell me about your travel preferences, and I'll recommend the perfect tours and guides for you.</p>
+                                <p>Where are you planning to visit, and what are you interested in?</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chat-input-container">
+                        <input type="text" id="chatInput" placeholder="Type your message..." />
+                        <button id="chatSendBtn" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Recommendations -->
+                <div id="chatRecommendations" class="chat-recommendations" style="display: none;">
+                    <h3>Recommended For You</h3>
+                    <div id="recommendedTours"></div>
+                    <div id="recommendedGuides"></div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- Tour Detail Modal -->
+    <div id="tourModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <div id="tourModalContent">
+                <!-- Content loaded dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Guide Detail Modal -->
+    <div id="guideModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <div id="guideModalContent">
+                <!-- Content loaded dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/api.js"></script>
+    <script src="js/location.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/tours.js"></script>
+    <script src="js/guides.js"></script>
+    <script src="js/chat.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
