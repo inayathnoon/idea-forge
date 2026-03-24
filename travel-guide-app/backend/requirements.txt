@@ -1,0 +1,8 @@
+Django==5.0.1
+djangorestframework==3.14.0
+django-cors-headers==4.3.1
+django-filter==23.5
+Pillow==10.2.0
+geopy==2.4.1
+python-decouple==3.8
+psycopg2-binary==2.9.9
