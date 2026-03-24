@@ -315,17 +315,26 @@ The very first issue in a new project is typically scaffolding. For this special
 
 ## Entropy Management
 
-After every 5 completed issues, run a quick health check:
+After every 5 completed issues, run two health checks:
 
-1. **Code patterns:** Are there any deviations from SCAFFOLDING.md? Fix them.
-2. **Dead code:** Are there unused imports or dead code? Clean them.
-3. **Quality score:** Does QUALITY_SCORE.md need updating? Update it.
-4. **Tech debt:** Is there tech debt worth logging? Add to tech-debt-tracker.md.
-5. **Documentation health:** Run doc-gardening scan:
-   ```bash
-   bash tools/doc-garden/scan.sh docs src
-   ```
-   If issues found, follow `agents/doc-gardener.md` to fix stale references, placeholders, and TODOs.
+**Garbage Collection (code health):**
+```bash
+bash tools/gc/run-gc.sh src
+```
+If issues found, follow `agents/garbage-collector.md`:
+- Fix convention violations
+- Remove unused dependencies
+- Review and delete dead code (or log to tech-debt-tracker)
+- Update QUALITY_SCORE.md
+
+**Doc Gardening (documentation health):**
+```bash
+bash tools/doc-garden/scan.sh docs src
+```
+If issues found, follow `agents/doc-gardener.md`:
+- Fix stale file references
+- Fill unfilled placeholders
+- Review and resolve TODO/TBD/FIXME markers
 
 ## Completion
 
