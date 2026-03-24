@@ -317,10 +317,15 @@ The very first issue in a new project is typically scaffolding. For this special
 
 After every 5 completed issues, run a quick health check:
 
-1. Are there any pattern deviations from SCAFFOLDING.md? Fix them.
-2. Are there unused imports or dead code? Clean them.
-3. Does QUALITY_SCORE.md need updating? Update it.
-4. Is there tech debt worth logging? Add to tech-debt-tracker.md.
+1. **Code patterns:** Are there any deviations from SCAFFOLDING.md? Fix them.
+2. **Dead code:** Are there unused imports or dead code? Clean them.
+3. **Quality score:** Does QUALITY_SCORE.md need updating? Update it.
+4. **Tech debt:** Is there tech debt worth logging? Add to tech-debt-tracker.md.
+5. **Documentation health:** Run doc-gardening scan:
+   ```bash
+   bash tools/doc-garden/scan.sh docs src
+   ```
+   If issues found, follow `agents/doc-gardener.md` to fix stale references, placeholders, and TODOs.
 
 ## Completion
 
