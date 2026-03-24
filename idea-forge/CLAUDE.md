@@ -4,14 +4,14 @@
 
 ```
 .claude/commands/  → Slash commands (/new-idea)
-agents/            → Agent personas (idea-capturer-1, idea-explorer-2, strategist-3, researcher-4, prd-writer-5, arch-writer-6, plan-writer-7, build-orchestrator-8, project-manager)
+agents/            → Agent personas (idea-capturer-1, idea-explorer-2, strategist-3, researcher-4, prd-writer-5, arch-writer-6, plan-writer-7, build-orchestrator-8, symphony-executor-9, project-manager)
 skills/            → Reusable capabilities agents use (elaborate, ask-questions, etc.)
 ```
 
 Flow: **Command** invokes **Agents** in sequence → Agents use **Skills**
 
 ## What This Project Does
-IdeaForge turns raw ideas into structured docs (PRD, Architecture, Build Plan, Decisions). Claude IS the agent.
+IdeaForge turns raw ideas into structured docs (PRD, Architecture, Build Plan, Decisions), creates a GitHub repo with harness-engineered docs, seeds Linear with tasks, and executes them autonomously via the Symphony pattern. Claude IS the agent.
 
 ## Commands
 
@@ -34,7 +34,8 @@ IdeaForge turns raw ideas into structured docs (PRD, Architecture, Build Plan, D
 | PRD Writer | agents/prd-writer-5.md | Writes docs/{idea.name}/PRD.md |
 | Arch Writer | agents/arch-writer-6.md | Writes docs/{idea.name}/ARCHITECTURE.md |
 | Plan Writer | agents/plan-writer-7.md | Writes docs/{idea.name}/BUILD_PLAN.md |
-| Build Orchestrator | agents/build-orchestrator-8.md | Creates GitHub repo and pushes all docs |
+| Build Orchestrator | agents/build-orchestrator-8.md | Creates GitHub repo, pushes harness docs, seeds Linear |
+| Symphony Executor | agents/symphony-executor-9.md | Picks up Linear issues one by one, implements, tests, PRs, merges |
 | Project Manager | agents/project-manager.md | Captures key decisions incrementally after each stage |
 
 ## Pipeline Flow
@@ -46,14 +47,32 @@ IdeaForge turns raw ideas into structured docs (PRD, Architecture, Build Plan, D
   → [gate: user approves]
   → researcher-4 → prd-writer-5 → arch-writer-6 → plan-writer-7
   → project-manager (final)
-  → build-orchestrator-8
+  → build-orchestrator-8 (GitHub repo + harness docs + Linear project)
+  → symphony-executor-9 (picks up Linear issues, implements, merges — loops until done)
 ```
 
 ## Memory
 - `memory/ideas_store.json` — All ideas + stages
 - `idea_storage/{slug}-{timestamp}/` — Planner explorations
 - `docs/{idea.name}/` — All docs for that idea (DECISIONS, RESEARCH, PRD, ARCHITECTURE, BUILD_PLAN)
-- Stage flow: `structured` → `reviewed` → `built`
+- Stage flow: `structured` → `reviewed` → `built` → `executing`
+
+## Harness Engineering
+
+Generated repos follow OpenAI's harness engineering pattern:
+- `CLAUDE.md` — harness: rules, patterns, commands (pushed to every repo)
+- `AGENTS.md` — short table of contents (~100 lines), not an encyclopedia
+- `docs/` — structured knowledge base with progressive disclosure
+- `docs/design-docs/core-beliefs.md` — golden principles that prevent drift
+- Architecture layers enforced mechanically (Types → Config → Repo → Service → Runtime → UI)
+
+## Symphony Execution
+
+After build-orchestrator creates the repo and seeds Linear:
+- Symphony Executor (`agents/symphony-executor-9.md`) takes over
+- Picks up Todo issues from Linear, implements them end-to-end
+- Creates PRs, handles feedback, merges, loops until queue is empty
+- Escalates blockers by marking issues as Rework
 
 ## When adding new components
 1. **Skill** — Add `skills/<name>/SKILL.md`

@@ -185,3 +185,55 @@ If you hit a genuine blocker (missing credentials, broken dependency, unclear re
 1. Add a Linear comment describing the blocker precisely
 2. Move issue to **Rework**
 3. Stop — do not guess or work around auth/tool issues
+
+---
+
+## Symphony Execution Loop
+
+This repo supports fully autonomous execution via the Symphony pattern. Instead of manually picking up issues, the Symphony Executor loops through all Todo issues automatically.
+
+### How it works
+
+```
+LOOP:
+  1. Query Linear for next Todo issue (priority first, then oldest)
+  2. Move to In Progress
+  3. Read context (CLAUDE.md, ARCHITECTURE.md, SCAFFOLDING.md)
+  4. Plan implementation (post plan as Linear comment)
+  5. Implement (code + tests on a branch)
+  6. Validate (run tests, self-review)
+  7. Create PR and push
+  8. Move to Merging
+  9. Handle CI failures and review feedback
+  10. Merge PR
+  11. Move to Done
+  12. Pick next Todo issue (GOTO 1)
+```
+
+### When to use Symphony mode
+
+- **After build-orchestrator creates the repo and seeds Linear issues**
+- **For Phase 1 scaffolding and initial implementation**
+- **For any batch of well-defined, independent tasks**
+
+### When NOT to use Symphony mode
+
+- Tasks that require human product decisions mid-implementation
+- Tasks with unclear requirements (mark Rework instead)
+- Tasks that depend on external systems not yet configured
+
+### Starting the loop
+
+From the repo root, follow `agents/symphony-executor-9.md` — it will:
+1. Read this file's frontmatter for the Linear project key
+2. Query for Todo issues
+3. Execute each one end-to-end
+4. Report completion when the queue is empty
+
+### Entropy management
+
+After every 5 completed issues, the executor runs a health check:
+- Pattern deviations from SCAFFOLDING.md
+- Dead code and unused imports
+- Quality score updates
+- Tech debt logging

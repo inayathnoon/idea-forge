@@ -69,13 +69,14 @@ For each template in `templates/`:
 2. Push the populated content to GitHub using MCP:
    ```
    user-github → create_or_update_file:
-     - path: AGENTS.md (or ARCHITECTURE.md, WORKFLOW.md, SCAFFOLDING.md, README.md)
+     - path: CLAUDE.md (or AGENTS.md, ARCHITECTURE.md, WORKFLOW.md, SCAFFOLDING.md, README.md)
      - content: [populated template content]
      - message: "Add Symphony docs: {filename}"
    ```
 
 **Files to push (root level):**
-- `AGENTS.md` ← `templates/AGENTS.md` (populated)
+- `CLAUDE.md` ← `templates/CLAUDE.md` (populated) — **harness-style project instructions, pushed first**
+- `AGENTS.md` ← `templates/AGENTS.md` (populated) — short table of contents (~100 lines)
 - `ARCHITECTURE.md` ← root-level `ARCHITECTURE.md` (from arch-writer-6, not a template)
 - `WORKFLOW.md` ← `templates/WORKFLOW.md` (populated)
 - `SCAFFOLDING.md` ← `templates/SCAFFOLDING.md` (populated)
@@ -142,7 +143,7 @@ For each subdirectory in `templates/docs/`:
 Repo: {github_url}
 
 Pushed files:
-  ├── AGENTS.md, ARCHITECTURE.md, WORKFLOW.md, SCAFFOLDING.md, README.md
+  ├── CLAUDE.md, AGENTS.md, ARCHITECTURE.md, WORKFLOW.md, SCAFFOLDING.md, README.md
   ├── docs/product-specs/ (index.md, mvp.md)
   ├── docs/design-docs/ (index.md, core-beliefs.md, decision docs)
   ├── docs/exec-plans/ (tech-debt-tracker.md, active/mvp-build-plan.md)

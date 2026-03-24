@@ -106,10 +106,12 @@ Linear:
 
 Next steps:
   1. Clone the repo and open in Claude Code
-  2. Read AGENTS.md to understand the project structure
-  3. Read WORKFLOW.md to understand the agent workflow
-  4. Use WORKFLOW.md to pick up Linear issues one by one
-  5. Start with Phase 1 tasks from BUILD_PLAN
+  2. Read CLAUDE.md — it's the harness: rules, patterns, commands
+  3. Read AGENTS.md — it's the map: table of contents for all docs
+  4. Read WORKFLOW.md — it's the routing table: how issues flow
+  5. Run Symphony Executor (agents/symphony-executor-9.md) to start
+     autonomous implementation — picks up Linear issues one by one,
+     implements, tests, PRs, and merges until all Phase 1 tasks are Done
 ```
 
 ### Step 8 — Validate Build
@@ -143,6 +145,13 @@ python3 harness/trigger-cross-cutting.py plan_written built
 This identifies which agents (like project-manager) should document the build phase. Follow any agent files listed, then update `memory/session.md` with the final stage state.
 
 ## What This Does NOT Do
-- ❌ No actual code/scaffolding (that's done during Phase 1 when teams start working)
-- ❌ No Linear tasks yet (users create those manually or via custom agents)
-- ❌ No CI/CD setup (configured per-project based on tech stack)
+- ❌ No actual code/scaffolding (that's done by the Symphony Executor in Stage 9)
+- ❌ No CI/CD setup (configured per-project during scaffolding — first Symphony task)
+
+## What Happens Next (Stage 9)
+The **Symphony Executor** (`agents/symphony-executor-9.md`) takes over:
+- Picks up Phase 1 issues from Linear one by one
+- Implements each task (code + tests)
+- Creates PRs, handles feedback, merges
+- Loops until all Todo issues are Done
+- Escalates blockers by marking issues as Rework
