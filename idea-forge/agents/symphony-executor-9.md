@@ -142,6 +142,26 @@ Before creating a PR, run validation:
 # Check for convention violations
 # (custom linters will surface remediation instructions)
 
+# Observability validation (if backend/integration work):
+if [ -d "tools/observability" ]; then
+  bash tools/observability/query.sh health || echo "WARNING: Observability stack not running"
+
+  # Start app and check for errors in logs
+  {dev_command} &
+  DEV_PID=$!
+  sleep 5
+
+  # Check for errors in observability stack
+  ERRORS=$(bash tools/observability/query.sh logs '{level="error"}' --last 1m 2>/dev/null | jq '.data.result | length' 2>/dev/null || echo "0")
+  if [ "$ERRORS" -gt 0 ]; then
+    echo "⚠️  Warning: Found $ERRORS error(s) in logs (last 1m)"
+    bash tools/observability/query.sh logs '{level="error"}' --last 1m
+  fi
+
+  kill $DEV_PID 2>/dev/null || true
+  wait $DEV_PID 2>/dev/null || true
+fi
+
 # If this issue touches frontend code:
 if grep -r "\.tsx\|\.jsx\|\.ts\|\.js" --include="*.md" <<< "{issue.description}" > /dev/null; then
   {dev_command} &

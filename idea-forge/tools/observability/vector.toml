@@ -1,0 +1,40 @@
+# Vector Configuration
+# Routes OpenTelemetry data to Loki (logs), Prometheus (metrics), and Jaeger (traces)
+
+# SOURCES
+# OpenTelemetry receiver (gRPC)
+[sources.otel_grpc]
+type = "opentelemetry"
+address = "0.0.0.0:4317"
+protocol = "grpc"
+
+# OpenTelemetry receiver (HTTP)
+[sources.otel_http]
+type = "opentelemetry"
+address = "0.0.0.0:4318"
+protocol = "http"
+
+# SINKS
+# Sink logs to Loki
+[sinks.loki_logs]
+type = "loki"
+inputs = ["otel_grpc", "otel_http"]
+endpoint = "http://loki:3100"
+encoding.codec = "json"
+healthcheck.enabled = true
+
+# Sink metrics to Prometheus
+[sinks.prometheus_metrics]
+type = "prometheus_exporter"
+inputs = ["otel_grpc", "otel_http"]
+address = "0.0.0.0:9598"
+default_namespace = "app"
+healthcheck.enabled = true
+
+# Sink traces to Jaeger
+[sinks.jaeger_traces]
+type = "opentelemetry"
+inputs = ["otel_grpc", "otel_http"]
+endpoint = "http://jaeger:14268/api/traces"
+protocol = "http"
+healthcheck.enabled = true
