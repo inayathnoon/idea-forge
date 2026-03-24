@@ -1,73 +1,65 @@
 #!/bin/bash
 
-# Symphony Scheduler Status Dashboard
-# Shows scheduler and executor health
-# Usage: bash status.sh
+# Scheduler Status Dashboard
+# Shows cron status, executor status, and recent logs
+# Usage: bash tools/scheduler/status.sh
 
-set -e
+set -uo pipefail
 
-LOCK_FILE="${LOCK_FILE:-/tmp/symphony-executor.lock}"
-LOG_FILE="${LOG_FILE:-/var/log/symphony-scheduler.log}"
+LOCK_FILE="/tmp/symphony-executor.lock"
+LOG_FILE="/var/log/symphony-scheduler.log"
 
-echo "═══════════════════════════════════════════════════════════════"
+echo "════════════════════════════════════════════════════════════"
 echo "Symphony Scheduler Status"
-echo "═══════════════════════════════════════════════════════════════"
+echo "════════════════════════════════════════════════════════════"
 echo ""
 
-# Check cron job status
-echo "📅 Cron Job Status:"
-if crontab -l 2>/dev/null | grep -q "symphony-scheduler"; then
-  echo "   ✅ Active (configured)"
-  CRON_LINE=$(crontab -l 2>/dev/null | grep "symphony-scheduler" | head -1)
-  echo "   Schedule: ${CRON_LINE:0:50}..."
+# Check cron status
+echo "📅 Cron Job Status"
+echo "─────────────────────────────────────────────────────────────"
+
+if crontab -l 2>/dev/null | grep -q "poll-linear.sh"; then
+  echo "✅ Cron job installed"
+  echo ""
+  echo "Next runs (per crontab):"
+  crontab -l 2>/dev/null | grep "poll-linear.sh" | sed 's/^/   /'
 else
-  echo "   ❌ Not configured"
-  echo "   Run: bash tools/scheduler/setup-cron.sh <repo-path> <project-key>"
+  echo "❌ Cron job not installed"
+  echo "   Setup: bash tools/scheduler/setup-cron.sh . <PROJECT_KEY>"
 fi
-
 echo ""
 
-# Check executor status
-echo "🚀 Executor Status:"
-if [[ -f "$LOCK_FILE" ]]; then
-  PID=$(cat "$LOCK_FILE" 2>/dev/null || echo "")
-  if [[ -n "$PID" ]] && kill -0 "$PID" 2>/dev/null; then
-    echo "   🟢 Running (PID $PID)"
-    # Show process details
-    ps -p "$PID" -o etime,cmd 2>/dev/null | tail -1 | sed 's/^/      /'
+# Check executor lock
+echo "🚀 Executor Status"
+echo "─────────────────────────────────────────────────────────────"
+
+if [ -f "$LOCK_FILE" ]; then
+  LOCK_PID=$(cat "$LOCK_FILE" 2>/dev/null || echo "")
+  if [ -n "$LOCK_PID" ] && kill -0 "$LOCK_PID" 2>/dev/null; then
+    echo "✅ Executor running (PID $LOCK_PID)"
   else
-    echo "   ⚠️  Stale lock file detected (PID $PID no longer alive)"
-    echo "   Lock file: $LOCK_FILE"
-    echo "   Auto-cleanup will occur on next scheduler run"
+    echo "⚠️  Stale lock file (PID $LOCK_PID not running)"
+    echo "   Will be cleaned up on next scheduler run"
   fi
 else
-  echo "   🔵 Idle (no executor running)"
+  echo "✅ Executor idle (ready to run)"
 fi
-
 echo ""
 
-# Check log file
-echo "📝 Recent Logs:"
-if [[ -f "$LOG_FILE" ]]; then
-  LOG_SIZE=$(du -h "$LOG_FILE" | cut -f1)
-  echo "   Log file: $LOG_FILE ($LOG_SIZE)"
-  echo "   Last 15 lines:"
-  echo ""
-  tail -15 "$LOG_FILE" | sed 's/^/      /'
+# Show recent logs
+echo "📋 Recent Scheduler Activity (last 15 lines)"
+echo "─────────────────────────────────────────────────────────────"
+
+if [ -f "$LOG_FILE" ]; then
+  tail -15 "$LOG_FILE" | sed 's/^/   /'
 else
-  echo "   ⚠️  Log file not found: $LOG_FILE"
-  echo "   Scheduler has not run yet, or log path is different"
+  echo "   No logs yet. Waiting for first scheduler run..."
 fi
-
-echo ""
-echo "═══════════════════════════════════════════════════════════════"
 echo ""
 
-# Summary
-echo "💡 Quick actions:"
-echo "   tail -f $LOG_FILE          — Watch logs in real-time"
-echo "   crontab -e                 — Edit cron schedule"
-echo "   rm $LOCK_FILE              — Manually clear stale lock"
-echo ""
-
-exit 0
+echo "════════════════════════════════════════════════════════════"
+echo "Commands:"
+echo "  • Setup: bash tools/scheduler/setup-cron.sh . <PROJECT_KEY>"
+echo "  • View logs: tail -f $LOG_FILE"
+echo "  • Trigger manually: bash tools/scheduler/poll-linear.sh"
+echo "════════════════════════════════════════════════════════════"
