@@ -141,9 +141,39 @@ Before creating a PR, run validation:
 
 # Check for convention violations
 # (custom linters will surface remediation instructions)
+
+# If this issue touches frontend code:
+if grep -r "\.tsx\|\.jsx\|\.ts\|\.js" --include="*.md" <<< "{issue.description}" > /dev/null; then
+  {dev_command} &
+  DEV_PID=$!
+  sleep 5
+
+  # Validate UI and capture screenshot
+  node tools/cdp/validate-ui.js http://localhost:3000 screenshots/{issue.identifier}.png
+  UI_RESULT=$?
+
+  # Run journey tests if available
+  if [ -f "tools/cdp/journeys/{issue.identifier}.json" ]; then
+    node tools/cdp/record-journey.js tools/cdp/journeys/{issue.identifier}.json
+    JOURNEY_RESULT=$?
+  fi
+
+  kill $DEV_PID 2>/dev/null || true
+  wait $DEV_PID 2>/dev/null || true
+
+  if [ $UI_RESULT -ne 0 ]; then
+    echo "UI validation failed. Fix console errors and rerun."
+    exit 1
+  fi
+
+  if [ -n "$JOURNEY_RESULT" ] && [ $JOURNEY_RESULT -ne 0 ]; then
+    echo "Journey test failed. Check failure screenshots."
+    exit 1
+  fi
+fi
 ```
 
-**If tests fail:** Fix the failures. Do not proceed with a failing test suite.
+**If tests or UI validation fail:** Fix the failures. Do not proceed with a failing test suite or console errors.
 
 **Self-review checklist:**
 - [ ] Implementation matches issue description — no scope creep
@@ -175,6 +205,10 @@ MCP github -> create_pull_request:
 
     ## Tests
     {what was tested and how}
+
+    ## UI Validation (if applicable)
+    Screenshots of the implemented feature (if frontend code was modified):
+    ![Screenshot](../screenshots/{issue.identifier}.png)
 
     Closes {issue.identifier}
   - head: {branch-name}

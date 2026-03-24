@@ -1,0 +1,52 @@
+{
+  "name": "user-signup-flow",
+  "baseUrl": "http://localhost:3000",
+  "outputDir": "screenshots/journeys/signup",
+  "steps": [
+    {
+      "action": "navigate",
+      "url": "/signup"
+    },
+    {
+      "action": "screenshot",
+      "name": "01-signup-page"
+    },
+    {
+      "action": "type",
+      "selector": "#email",
+      "text": "test@example.com"
+    },
+    {
+      "action": "type",
+      "selector": "#password",
+      "text": "TestPassword123!"
+    },
+    {
+      "action": "screenshot",
+      "name": "02-form-filled"
+    },
+    {
+      "action": "click",
+      "selector": "button[type=submit]"
+    },
+    {
+      "action": "wait",
+      "ms": 2000
+    },
+    {
+      "action": "screenshot",
+      "name": "03-after-submit"
+    },
+    {
+      "action": "assert-text",
+      "text": "Welcome"
+    },
+    {
+      "action": "assert-element",
+      "selector": ".dashboard"
+    },
+    {
+      "action": "assert-no-errors"
+    }
+  ]
+}
