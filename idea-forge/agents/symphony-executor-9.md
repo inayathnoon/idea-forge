@@ -133,11 +133,14 @@ MCP linear -> save_comment:
 Before creating a PR, run validation:
 
 ```bash
-# Run tests
+# Run unit tests
 {test_command}
 
-# Run linter (if configured)
-{lint_command}
+# Run structural tests (architecture, conventions, dependencies)
+npm run test:structural
+
+# Run linters (architecture, naming, file size)
+bash tools/lint/run-all-lints.sh src
 
 # Check for convention violations
 # (custom linters will surface remediation instructions)
