@@ -243,11 +243,34 @@ MCP github -> create_pull_request:
 ```
 MCP linear -> save_issue:
   - id: {issue.id}
-  - status: "Merging"
-  - comment: "PR created: {pr_url}. Tests passing. Ready for review."
+  - status: "In Review"
+  - comment: "PR created: {pr_url}. Tests passing. Agent review in progress."
 ```
 
-### Step 9 — Handle Feedback
+### Step 9 — Agent Review
+
+Before human eyes see this PR, run agent-to-agent review:
+
+1. **Follow agents/pr-reviewer.md** against the PR
+   - Architecture compliance (layers, imports, cross-cutting)
+   - Convention compliance (naming, size, format)
+   - Test coverage (every new function has tests)
+   - Product alignment (scope, PRD match)
+   - Security & reliability (no secrets, validation, error handling)
+
+2. **If APPROVED:**
+   - Add comment: "✅ Approved by PR Reviewer Agent"
+   - Proceed to Step 10 (Merge)
+
+3. **If CHANGES REQUESTED:**
+   - Read each comment carefully
+   - Fix each issue on current branch
+   - Commit: `{ISSUE-ID}: Address PR review feedback`
+   - Push fixes
+   - Return to Step 1 of this review (re-run reviewer)
+   - **Max 3 iterations** — if still not approved, escalate to human (move issue to Rework)
+
+### Step 10 — Handle Feedback
 
 Check the PR for:
 1. **CI status** — if failing, read the logs, fix, push
@@ -259,7 +282,7 @@ Iterate until:
 - All review comments are addressed
 - No conflicts
 
-### Step 10 — Merge
+### Step 11 — Merge
 
 ```
 MCP github -> merge_pull_request:
@@ -274,7 +297,7 @@ MCP linear -> save_issue:
   - comment: "Merged. Tests passing. Implementation complete."
 ```
 
-### Step 11 — Loop
+### Step 12 — Loop
 
 Go back to Step 1 and pick up the next Todo issue.
 
