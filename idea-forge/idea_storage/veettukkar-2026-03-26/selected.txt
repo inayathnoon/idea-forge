@@ -1,0 +1,36 @@
+SELECTED DIRECTION: Job-Request Marketplace
+==========================================
+
+Direction Number: 2
+Selected On: 2026-03-26
+
+DESCRIPTION
+-----------
+Homeowners post a job request specifying: skill category (one of 6), date, duration (half-day
+or full-day), location (GPS or area name), and a short description. Workers within ~10km who
+have that skill and are available on that date receive a push notification. They can accept or
+decline. The homeowner is notified when a worker accepts, and receives the worker's phone number
+to coordinate final details. After the job, both sides rate each other.
+
+An "available today" toggle lets workers signal same-day availability, surfacing them at the
+top of relevant searches for last-minute requests — borrowing urgency value from Direction 6
+without requiring a separate product mode.
+
+WHY THIS OVER THE DEFAULT (same)
+---------------------------------
+This IS the default direction, closest to the raw idea. No non-default reasoning needed.
+
+PRODUCT PRINCIPLES FROM THIS DIRECTION
+----------------------------------------
+- Cash payment is preserved; the app handles matching only, not money.
+- Trust is built through ratings, not certification (faster to bootstrap).
+- Malayalam UI is mandatory from day one; it's not a localisation afterthought.
+- Worker profiles are simple (skills, location, rate, rating) — no portfolio, no CV.
+- Homeowners are verified by phone number only; no ID check for MVP.
+
+WHAT THIS DIRECTION DEFERS
+---------------------------
+- In-app payments and commission model (v2)
+- Worker certification or background checks (v2)
+- Subscription-based homeowner plans (v3)
+- Expansion beyond Kerala (post-PMF)

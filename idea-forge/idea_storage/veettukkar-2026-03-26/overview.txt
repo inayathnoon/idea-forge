@@ -1,0 +1,75 @@
+Veettukkar — Kerala's Home Services Marketplace
+Exploration Session: 2026-03-26
+
+RAW IDEA
+--------
+An application for house helpers in Kerala — coconut tree climbers, house painters, cleaners,
+cement construction workers, plumbers, and electricians — who work on daily wages or half-day wages.
+
+10 DIRECTIONS EXPLORED
+-----------------------
+
+1. Hyperlocal Job Board
+   Workers list themselves; homeowners browse and contact directly.
+   Core bet: supply-driven discovery, low friction for workers to join.
+   Risk: homeowners must scroll and reach out; no real-time urgency.
+
+2. Job-Request Marketplace ★ SELECTED
+   Homeowners post jobs; nearby workers are notified and accept.
+   Core bet: demand-driven matching, real-time notifications bridge both sides.
+   Risk: requires workers to be responsive on mobile.
+
+3. WhatsApp-Native Bot
+   Job requests via WhatsApp to a central number; bot routes to workers.
+   Core bet: zero install friction for homeowners (everyone uses WhatsApp in Kerala).
+   Risk: hard to scale, difficult to track ratings and history.
+
+4. Cooperative Platform
+   Workers join registered co-ops; platform books through co-op admins.
+   Core bet: trust via institutionalisation.
+   Risk: co-op onboarding is slow; adds operational complexity.
+
+5. Subscription Crew
+   Homeowners subscribe for X hours/month of cleaning or maintenance.
+   Core bet: predictable recurring revenue and worker income.
+   Risk: workers with diverse skills don't fit a subscription bundle well for one-time tasks.
+
+6. Day-Labour Exchange (Available Now)
+   Workers toggle "available now"; homeowners see a live board of nearby workers.
+   Core bet: Uber-style instant matching for same-day needs.
+   Risk: requires workers to actively open app daily to signal availability.
+
+7. Skill Certification + Trust Profile
+   Workers earn micro-certifications (e.g., "Verified Coconut Climber"); homeowners hire by trust score.
+   Core bet: trust and safety differentiation.
+   Risk: certification process is slow to bootstrap supply.
+
+8. Community Referral Network
+   Homeowners vouch for workers; vouches become reputation.
+   Core bet: digitise existing word-of-mouth.
+   Risk: cold-start problem — no vouches until network exists.
+
+9. Agency-as-a-Platform
+   App operates as a licensed labour agency with commission per booking.
+   Core bet: revenue-first model with platform liability protection.
+   Risk: agency registration adds legal complexity early.
+
+10. Emergency Services Fast-Lane
+    Urgent jobs (burst pipe, fallen coconut tree) get priority routing and premium rates.
+    Core bet: high willingness-to-pay for urgency.
+    Risk: narrow TAM; hard to build a sustainable daily-use habit on emergencies alone.
+
+TOP 3
+------
+1. Direction 2 — Job-Request Marketplace (SELECTED)
+2. Direction 6 — Day-Labour Exchange
+3. Direction 10 — Emergency Services Fast-Lane
+
+SELECTION RATIONALE
+-------------------
+Direction 2 was chosen because:
+- It directly mirrors how the problem is experienced: homeowner needs a worker for a specific date/task.
+- Real-time notifications make the product feel alive and useful, driving repeat usage.
+- Ratings accumulate naturally over job completions.
+- Proven marketplace model (analogues: UrbanClap/Urban Company in India, TaskRabbit globally).
+- Incorporating an "available today" flag from Direction 6 captures urgency within the same product.

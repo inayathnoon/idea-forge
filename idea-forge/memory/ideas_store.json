@@ -30,7 +30,7 @@
         },
         {
           "title": "Adaptive Quiz Engine + Stuck Detection",
-          "description": "4-level question system per subsection (1=easiest, 4=hardest). Child starts at L3. Correct → advances to L4 → passes stage. Wrong → shown explanation + retry at same level. Parent is nudged only when child exhausts all retry paths (fails L3 retry OR fails L4 retry). Stuck detection is embedded in level progression — no time-based thresholds.",
+          "description": "4-level question system per subsection (1=easiest, 4=hardest). Child starts at L3. Correct \u2192 advances to L4 \u2192 passes stage. Wrong \u2192 shown explanation + retry at same level. Parent is nudged only when child exhausts all retry paths (fails L3 retry OR fails L4 retry). Stuck detection is embedded in level progression \u2014 no time-based thresholds.",
           "priority": "high"
         },
         {
@@ -78,6 +78,154 @@
       "github_url": "https://github.com/inayathnoon/learnbridge",
       "updated_at": "2026-03-02T13:21:00.000000",
       "created_at": "2026-03-01T11:12:02.919002"
+    },
+    {
+      "name": "veettukkar",
+      "full_name": "Veettukkar \u2014 Kerala\u2019s Home Services Marketplace",
+      "problem": "Homeowners in Kerala struggle to find reliable daily-wage workers \u2014 coconut tree climbers, house painters, cleaners, cement construction workers, plumbers, and electricians \u2014 on short notice. Workers depend entirely on word-of-mouth and personal networks, limiting their reach and leaving them with unpredictable income. Both sides lose: homeowners can\u2019t get help when they need it; workers miss jobs they could have taken.",
+      "solution": "A lightweight mobile app connecting Kerala homeowners with verified local daily-wage workers. Homeowners post a job (skill type, date, half-day or full-day, location). Nearby available workers are notified and can accept. A ratings system builds trust on both sides. No payment processing in MVP \u2014 workers are paid in cash as they always have been. The app handles matching and reliability.",
+      "target_users": "Primary: Homeowners in Kerala who occasionally need skilled or semi-skilled household work \u2014 one-time jobs like climbing a coconut tree, painting a room, or calling a plumber for a leaking pipe. Secondary: Daily-wage workers (coconut climbers, painters, cleaners, construction workers, plumbers, electricians) who want a steady stream of local job opportunities beyond their personal network.",
+      "mvp_features": [
+        {
+          "title": "Worker Profile",
+          "description": "Workers register with name, phone, skills (one or more of the 6 categories), location (district/area), day rate and half-day rate, and availability. Profile photo optional.",
+          "priority": "high"
+        },
+        {
+          "title": "Job Posting by Homeowner",
+          "description": "Homeowner posts a job: skill category, date, duration (half-day or full-day), location, and a short description. Visible to nearby workers only.",
+          "priority": "high"
+        },
+        {
+          "title": "Nearby Worker Matching",
+          "description": "Show available workers within ~10km for the requested skill and date. Workers are ranked by rating and distance.",
+          "priority": "high"
+        },
+        {
+          "title": "Job Notification & Accept/Decline",
+          "description": "Worker receives push notification when a matching job is posted. Accepts or declines. Homeowner is notified of acceptance and gets worker\u2019s contact number to confirm details.",
+          "priority": "high"
+        },
+        {
+          "title": "Post-Job Ratings",
+          "description": "After job completion, homeowner rates the worker (1\u20135 stars + optional comment). Worker can rate the homeowner. Ratings are visible on both profiles.",
+          "priority": "high"
+        },
+        {
+          "title": "Malayalam-First UI",
+          "description": "All UI text in Malayalam by default. English as secondary option. Critical for adoption by workers who may not be fluent in English.",
+          "priority": "high"
+        },
+        {
+          "title": "Phone OTP Authentication",
+          "description": "Register and log in with phone number + SMS OTP only. No email required. Handles workers on low-end Android phones with limited literacy.",
+          "priority": "high"
+        }
+      ],
+      "success_metrics": [
+        "% of posted jobs filled within 24 hours",
+        "Worker repeat job rate (jobs completed per worker per month)",
+        "Homeowner repeat posting rate (jobs posted per month per user)",
+        "Day-30 app retention for both user types",
+        "Average worker rating across completed jobs"
+      ],
+      "constraints": "Solo founder, lean budget, Kerala-only MVP. Workers likely use low-end Android phones \u2014 app must be lightweight and work on 3G/4G. Malayalam is primary language. No payment processing in v1 (cash model). No team.",
+      "repo_topics": [
+        "home-services",
+        "gig-economy",
+        "kerala",
+        "india",
+        "daily-wage",
+        "marketplace",
+        "react-native",
+        "firebase",
+        "malayalam",
+        "hyperlocal"
+      ],
+      "direction": {
+        "chosen": "Job-Request Marketplace",
+        "reasoning": "Directly mirrors how the problem is experienced: homeowner posts a job, nearby workers are notified and accept. Real-time notifications drive engagement on both sides. Ratings accumulate naturally. Proven marketplace model (analogues: Urban Company in India, TaskRabbit globally). Incorporates an 'available today' toggle from Direction 6 to handle urgency within the same product."
+      },
+      "review": {
+        "verdict": "approved",
+        "scores": {
+          "clarity": 8,
+          "market_viability": 7,
+          "feasibility": 9,
+          "user_validation": 7,
+          "overall": 7.75
+        },
+        "feedback": {
+          "problem_clarity": "Sharp and specific. Two identifiable user groups with concrete friction. Six worker categories eliminate ambiguity. Cold-start strategy not addressed in spec.",
+          "market_viability": "Real market, real gap vs. Urban Company (which doesn't serve informal Kerala labour market). Monetisation deferred to v2 \u2014 acceptable for MVP. WhatsApp groups are the real competition.",
+          "tech_feasibility": "React Native + Firebase is fast and proven. Phone OTP via Firebase is trivial. Malayalam localisation adds frontend work but is necessary. Low-end Android compatibility requires discipline.",
+          "user_validation": "Problem is experienced daily \u2014 no education needed. Workers motivated by income. Homeowners have urgent latent demand. No user interviews yet; first-worker onboarding may need to be in-person."
+        },
+        "refined_mvp_features": [
+          {
+            "title": "Worker Profile",
+            "description": "Workers register with name, phone, skills (one or more of 6 categories), location, day/half-day rate. Availability calendar. Optional photo.",
+            "priority": "high"
+          },
+          {
+            "title": "Available Today Toggle",
+            "description": "Workers flag themselves as available same-day. Surfaces them at top of relevant matches for urgent requests.",
+            "priority": "high"
+          },
+          {
+            "title": "Job Posting by Homeowner",
+            "description": "Homeowner posts job: skill category, date, duration (half/full day), location, description. Optional 'urgent' tag for same-day needs.",
+            "priority": "high"
+          },
+          {
+            "title": "Nearby Worker Matching",
+            "description": "Show available workers within ~10km for skill and date. Ranked by rating, then availability (today > later), then distance.",
+            "priority": "high"
+          },
+          {
+            "title": "Job Notification & Accept/Decline",
+            "description": "Worker gets push notification for matching jobs. Accepts or declines. Homeowner gets worker phone number on acceptance.",
+            "priority": "high"
+          },
+          {
+            "title": "Post-Job Ratings",
+            "description": "Homeowner rates worker (1\u20135 stars + comment). Worker rates homeowner. Visible on profiles. This is the key differentiator vs. WhatsApp groups.",
+            "priority": "high"
+          },
+          {
+            "title": "Malayalam-First UI",
+            "description": "All text in Malayalam by default. English toggle. Essential for worker adoption.",
+            "priority": "high"
+          },
+          {
+            "title": "Phone OTP Authentication",
+            "description": "Phone number + SMS OTP only. No email. Works on low-end Android with limited literacy.",
+            "priority": "high"
+          }
+        ],
+        "key_risks": [
+          "Cold-start: need strategy to onboard first 30 workers (likely in-person in one neighbourhood)",
+          "Geographic density: sparse areas may not have enough workers per skill",
+          "WhatsApp competition: ratings/trust must be made prominently valuable"
+        ],
+        "pilot_recommendation": "Start in one district (Ernakulam or Thiruvananthapuram) before expanding"
+      },
+      "tech_stack": {
+        "language": "TypeScript",
+        "framework": "React Native (Expo)",
+        "database": "Cloud Firestore",
+        "infra": "Firebase (Auth + Firestore + Functions + Storage + FCM) + Twilio WhatsApp API + DigiLocker API",
+        "other": [
+          "Geohash proximity queries via geofire-common",
+          "i18next for Malayalam/Hindi/English localisation",
+          "Cloud Functions v2 (Node.js 20) for job matching and notifications",
+          "Firebase Storage for worker profile photos"
+        ]
+      },
+      "stage": "built",
+      "github_url": "https://github.com/inayathnoon/veettukkar",
+      "created_at": "2026-03-26T03:55:00.000000",
+      "updated_at": "2026-03-26T14:15:00.000000"
     }
   ]
 }

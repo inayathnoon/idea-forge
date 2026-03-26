@@ -1,98 +1,63 @@
-# /advance — Run the Next Step
+# /advance — Run the Next Pipeline Stage
 
-No prompts. No confirmations. Just runs the next agent in the pipeline.
+Run the next agent in the pipeline for the current idea. Handles checkpointing, cross-cutting agents, and feedback automatically.
 
-## How it works
+## Process
 
-### Step 1 — Resolve which idea to advance
-
-1. Read `memory/session.md` — if it has an `idea:` field and `status: active`, that is the active idea. Use it. Skip to Step 2.
-2. Otherwise read `memory/ideas_store.json` and collect all ideas that are **incomplete** (missing at least one doc).
-   - **0 incomplete** → tell the user all ideas are fully built and stop.
-   - **1 incomplete** → use it. Skip to Step 2.
-   - **2+ incomplete** → show a numbered list and ask which to advance:
-
+### 1. Read Current State
+```bash
+python3 harness/status.py
 ```
-Multiple ideas in progress — which one?
+Get the current idea and stage from `memory/ideas_store.json`. Identify the next transition from `harness/pipeline.json`.
 
-1. {idea.full_name} — Stage {N}, missing: {doc list}
-2. {idea.full_name} — Stage {N}, missing: {doc list}
-```
+If the pipeline is complete (stage = `built`), stop and tell the user.
 
-Wait for the user's answer, then proceed with the chosen idea.
-
-### Step 1b — Save Checkpoint (Recovery)
-
-Before running the agent, save a checkpoint so you can recover if something fails:
-
+### 2. Auto-Checkpoint
+Save a checkpoint before running the agent so we can rollback if something goes wrong:
 ```bash
 python3 harness/checkpoint.py save {current_stage}
 ```
 
-This saves the current `ideas_store.json` state. If the agent fails, you can rollback with:
-```bash
-python3 harness/checkpoint.py rollback {checkpoint_name}
-```
+### 3. Run the Next Agent
+Read `harness/pipeline.json` to find the next transition. Load the agent file from `agents/{agent_name}.md` and follow its instructions exactly.
 
-### Step 2 — Determine the next stage
+The agent sequence:
+| From | To | Agent |
+|------|----|-------|
+| raw | captured | idea-capturer-1 |
+| captured | explored | idea-explorer-2 |
+| explored | reviewed | strategist-3 |
+| reviewed | researched | researcher-4 |
+| researched | prd_written | prd-writer-5 |
+| prd_written | arch_written | arch-writer-6 |
+| arch_written | plan_written | plan-writer-7 |
+| plan_written | built | doc-pusher-8 |
 
-Read `memory/ideas_store.json` and check which docs exist in `docs/{idea.name}/`:
+**Gate check**: If current stage is `reviewed`, check `review.verdict`:
+- `approved` → proceed to researcher-4
+- `revise` → loop back to idea-capturer-1
+- `reject` → stop, tell user
 
-| Docs present | Next stage |
-|---|---|
-| No `RESEARCH.md` | Stage 4 — Researcher |
-| `RESEARCH.md`, no `PRD.md` | Stage 5 — PRD Writer |
-| `PRD.md`, no `ARCHITECTURE.md` | Stage 6 — Arch Writer |
-| `ARCHITECTURE.md`, no `BUILD_PLAN.md` | Stage 7 — Plan Writer |
-| All docs present | Stage 8 — Build Orchestrator |
-| All docs + repo pushed | Nothing left — tell the user |
-
-### Step 2 — Announce and run
-
-Print exactly one line:
-
-```
-→ Advancing to Stage {N}: {agent name}
-```
-
-Then immediately follow the agent file in full — no further confirmation.
-
----
-
-## Agent files
-
-- Stage 4: `agents/researcher-4.md`
-- Stage 5: `agents/prd-writer-5.md`
-- Stage 6: `agents/arch-writer-6.md`
-- Stage 7: `agents/plan-writer-7.md`
-- Stage 8: `agents/build-orchestrator-8.md`
-
-### Step 3 — Auto-trigger Cross-Cutting Agents
-
-After the main agent completes, check for cross-cutting agents that should run automatically:
-
+### 4. Trigger Cross-Cutting Agents
+After the agent completes, check if any cross-cutting agents should run:
 ```bash
 python3 harness/trigger-cross-cutting.py {from_stage} {to_stage}
 ```
+If project-manager is listed, follow `agents/project-manager.md` to capture decisions.
 
-This will output which cross-cutting agents (currently: `project-manager`) should be triggered. Run them in the order specified.
-
-**project-manager** is called after most stage transitions to capture key decisions made during that stage in `docs/design-docs/`. Follow `agents/project-manager.md` to document the stage's architectural choices, trade-offs, and rationale.
-
-### Step 4 — Collect Feedback
-
-After the agent completes, collect feedback on its output:
-
+### 5. Collect Feedback
+Ask the user how the agent did:
 ```bash
-python3 harness/feedback.py {stage_name}
+python3 harness/feedback.py {to_stage}
 ```
+This saves ratings and notes to `memory/feedback.json` for future improvements.
 
-This prompts you for:
-- **Rating:** thumbs up/down/neutral
-- **What worked:** positive notes
-- **What needs work:** improvement notes
-- **Suggestions:** specific ideas to try next time
+### 6. Report
+Show what happened and what's next:
+```
+Stage complete: {from_stage} -> {to_stage}
+Agent: {agent_name}
+Checkpoint: {checkpoint_name}
 
-Feedback is logged in `memory/feedback.json` and helps refine the playbook and agents over time.
-
-Then update `memory/session.md` to reflect the new completed stage.
+Next: /advance to run {next_agent}
+```
