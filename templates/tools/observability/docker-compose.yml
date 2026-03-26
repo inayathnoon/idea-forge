@@ -1,0 +1,83 @@
+version: '3.8'
+
+services:
+  # Loki: Log storage and querying (LogQL)
+  loki:
+    image: grafana/loki:2.9.0
+    container_name: symphony-loki
+    ports:
+      - "3100:3100"
+    environment:
+      - LOKI_CONFIG_YAML=/etc/loki/loki-config.yaml
+    volumes:
+      - loki-data:/loki
+    command: -config.file=/etc/loki/loki-config.yaml
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3100/ready"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  # Prometheus: Metrics storage and querying (PromQL)
+  prometheus:
+    image: prom/prometheus:v2.47.0
+    container_name: symphony-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9090/-/ready"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  # Jaeger: Distributed tracing
+  jaeger:
+    image: jaegertracing/all-in-one:1.50
+    container_name: symphony-jaeger
+    ports:
+      - "16686:16686"  # UI
+      - "14268:14268"  # HTTP collector
+      - "6831:6831/udp"  # OpenTelemetry
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:14268"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  # Vector: Log, metric, and trace collector
+  vector:
+    image: timberio/vector:0.33.0-alpine
+    container_name: symphony-vector
+    ports:
+      - "8686:8686"    # API
+      - "4317:4317"    # OTLP gRPC
+      - "4318:4318"    # OTLP HTTP
+    volumes:
+      - ./vector.toml:/etc/vector/vector.toml
+    command: -c /etc/vector/vector.toml
+    depends_on:
+      loki:
+        condition: service_healthy
+      prometheus:
+        condition: service_healthy
+      jaeger:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8686/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+volumes:
+  loki-data:
+  prometheus-data:
+
+networks:
+  default:
+    name: symphony-observability

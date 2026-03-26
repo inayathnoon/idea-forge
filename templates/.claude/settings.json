@@ -1,0 +1,29 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash tools/bootstrap/setup.sh",
+            "timeout": 120
+          }
+        ]
+      }
+    ]
+  },
+  "permissions": {
+    "allow": [
+      "Bash(npm install*)",
+      "Bash(npm run*)",
+      "Bash(npm test*)",
+      "Bash(npx jest*)",
+      "Bash(gh auth*)",
+      "Bash(gh pr*)",
+      "Bash(gh api*)",
+      "Bash(git *)",
+      "Bash(bash tools/*)"
+    ]
+  }
+}

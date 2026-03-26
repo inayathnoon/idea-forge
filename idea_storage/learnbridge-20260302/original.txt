@@ -1,0 +1,24 @@
+LearnBridge — App-First Learning Companion
+
+Problem:
+Children studying alone after school (ages 6–9, CBSE 5th) struggle silently when they get stuck on concepts like algebra. Parents are unavailable during study hours — not unwilling. Kids lose interest, pretend to understand, or get sent to tuition which feels like more school and breeds resistance.
+
+Solution:
+A web app that teaches CBSE 5th grade algebra through animated explainer videos + quizzes. It detects when a child is stuck using time-on-task and consecutive wrong answers, gives the child a 1-minute nudge timer first, then alerts the parent via iOS if the child still does not progress. The parent receives guided prompts to support — not teach — the child through the specific stuck point.
+
+Target Users:
+Primary: Children (CBSE 5th grade, ~10–11 years) studying independently on a browser.
+Secondary: Working parents who want to help but are unavailable to monitor — reached via iOS app with push alerts.
+
+MVP Features:
+- Animated video lessons (CBSE 5th algebra, chunked)
+- Adaptive quiz engine (tracks correct/incorrect streaks)
+- Progress detection engine (time-on-task + consecutive wrong answers)
+- Child nudge timer (1-minute countdown before escalating)
+- Parent iOS alert (push notification with topic + signal)
+- Parent guided prompt screen (what to say/ask the child)
+- Session + progress history (for parent)
+- Subscription + auth (monthly, one account per child)
+
+Constraints:
+Solo founder, AI-assisted. Web for child (browser), iOS for parent. CBSE 5th algebra only at launch. No team, no external budget.

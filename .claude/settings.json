@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__user-linear__save_issue"
+    ]
+  },
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cat | jq -r '.message // .input // empty' | grep -q '^/status' && (cd /Users/noon/Work/idea-forge && python3 harness/status.py) || true",
+            "statusMessage": "Fetching pipeline status..."
+          }
+        ]
+      }
+    ]
+  }
+}

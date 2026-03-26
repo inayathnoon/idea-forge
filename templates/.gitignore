@@ -1,0 +1,34 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+.next/
+
+# Environment & secrets
+.env
+.env.local
+.env.*.local
+
+# Bootstrap lock
+.bootstrap.done
+
+# Coverage & test output
+coverage/
+test-results/
+.nyc_output/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo

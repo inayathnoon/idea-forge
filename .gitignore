@@ -1,7 +1,25 @@
-# Ignore everything
-*
+# Unrelated projects
+Job-Agent-AI/
+Job-Agent-AI-main/
+Job-Agent-AI-main.zip
+ai-agents-for-beginners/
+remote-job-agent/
+flutter/
+travel-guide-app/
+venv/
+.venv/
+requirements.txt
+commands/
 
-# Except this file and idea-forge
-!.gitignore
-!idea-forge/
-!idea-forge/**
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+
+# Node
+node_modules/
+
+# Old subdirectory (content moved to root)
+idea-forge/

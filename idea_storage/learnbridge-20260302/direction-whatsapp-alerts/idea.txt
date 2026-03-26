@@ -1,0 +1,8 @@
+Direction 3 — WhatsApp-Native Parent Alerts
+
+Web app for child (browser). Stuck detection (time-on-task + wrong answer streaks) triggers a 1-minute child nudge timer, then sends the parent a WhatsApp message with the stuck topic and guided coaching prompts. No iOS app required — parent just needs WhatsApp.
+
+Target: Working parents in urban/semi-urban India with children in CBSE 5th grade.
+Monetization: Monthly subscription.
+Key advantage: Near-universal WhatsApp penetration in India eliminates the iOS install barrier.
+Key dependency: WhatsApp Business API access.
