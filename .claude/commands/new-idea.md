@@ -1,85 +1,34 @@
-# /new-idea — New Idea Pipeline
+# /new-idea — Full Pipeline from Scratch
 
-You are the **New Idea Orchestrator**. Run a raw idea through the IdeaForge pipeline, stage by stage. Do not skip ahead. Do not run the next stage until the user confirms the current one.
+Run the complete idea pipeline from raw idea to GitHub repo.
 
-## How to start
+## Process
 
-Ask the user: "What's your idea?" If they've already shared it, proceed directly to Stage 1.
+### 1. Start Fresh
+Check `memory/ideas_store.json` exists (create if not). This is a new idea — start at stage `raw`.
 
----
+### 2. Run Pipeline
+Run each agent in sequence using the `/advance` flow (checkpoint → agent → cross-cutting → feedback):
 
-## Stage 1: Idea Capture
+1. **idea-capturer-1** — Capture and structure the raw idea
+2. **idea-explorer-2** — Explore 10 directions, pick top 3, user selects
+3. **strategist-3** — Stress-test, generate agent persona, issue verdict
 
-Follow `agents/idea-capturer-1.md` in full.
+**Gate**: If verdict is `approved`, continue. If `revise`, loop back to stage 1. If `reject`, stop.
 
-When the user confirms the spec is correct, follow `agents/project-manager.md` with this scope:
-- Write only the **Origin** section and any **Key Decisions** made during clarification
-- Append to `docs/{idea.name}/DECISIONS.md` (create it if it doesn't exist)
+4. **researcher-4** — Market research, competitors, validation
+5. **prd-writer-5** — Write the PRD
+6. **arch-writer-6** — Design the architecture
+7. **plan-writer-7** — Create the build plan
+8. **project-manager** — Final decision docs
+9. **doc-pusher-8** — Create GitHub repo, push everything
 
----
+### 3. For Each Stage
+Follow the `/advance` command process:
+- Auto-checkpoint before each agent
+- Run the agent (follow its `.md` file exactly)
+- Trigger cross-cutting agents (project-manager after stages 1-3 and 7-8)
+- Collect feedback
 
-## Stage 2: Direction Exploration
-
-Follow `agents/idea-explorer-2.md` in full.
-
-When the user has confirmed the selected direction, follow `agents/project-manager.md` with this scope:
-- Document which direction was chosen and why, what alternatives were explored
-- Append a **Direction Decision** section to `docs/{idea.name}/DECISIONS.md`
-
----
-
-## Stage 3: Review
-
-Follow `agents/strategist-3.md` in full.
-
-When the review is complete, follow `agents/project-manager.md` with this scope:
-- Document the review scores, what the review surfaced, and the verdict
-- Append a **Review Insights** section to `docs/{idea.name}/DECISIONS.md`
-
----
-
-## Gate: Proceed?
-
-Show a summary:
-
-```
-Idea:      {name} — {one-line summary}
-Direction: {selected direction}
-Review:    {verdict} — Clarity: X | Feasibility: X | Differentiation: X | Completeness: X
-```
-
-Ask: **"Ready to write the PRD, architecture, and build plan?"**
-
-Wait for explicit confirmation. If the user wants to revisit anything, loop back to the relevant stage.
-
----
-
-## Stage 4: Research
-
-Follow `agents/researcher-4.md` in full.
-
-When research is complete, follow `agents/project-manager.md` with this scope:
-- Document any decisions or direction changes surfaced by the research
-- Note competitors that influenced scope, features cut or added, risks accepted
-- Append a **Research Decisions** section to `docs/{idea.name}/DECISIONS.md`
-- Skip this step if research produced no changes to prior decisions
-
----
-
-## Stage 5: PRD
-
-Follow `agents/prd-writer-5.md` in full.
-
----
-
-## Stage 6: Architecture
-
-Follow `agents/arch-writer-6.md` in full.
-
----
-
-## Stage 7: Build Plan
-
-Follow `agents/plan-writer-7.md` in full.
-
-When the build plan is confirmed, run the full `agents/project-manager.md` to finalize `docs/{idea.name}/DECISIONS.md` — incorporating PRD, architecture, and build plan decisions.
+### 4. Done
+When doc-pusher completes, the generated repo is self-contained. Show the final report from doc-pusher.

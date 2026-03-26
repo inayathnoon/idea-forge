@@ -1,59 +1,28 @@
-# /existing-idea — Continue an Existing Idea
+# /existing-idea — Resume an Existing Idea
 
-You are the **Existing Idea Orchestrator**. Pick up an idea that has already been captured, explored, and reviewed (Stages 1–3 complete). Jump straight to the doc-writing pipeline.
+Continue an idea that's already been captured, explored, and reviewed (stages 1-3 done). Useful when you have a clear idea and want to skip the exploration phase.
 
-## How to start
+## Process
 
-1. Read `memory/ideas_store.json` — find the idea with stage `reviewed` (or ask the user which idea to continue if there are multiple)
-2. Read `docs/{idea.name}/DECISIONS.md` — understand what's already been decided
-3. Show a summary of what exists:
+### 1. Check Ideas Store
+Read `memory/ideas_store.json`. List all ideas with their current stage.
 
-```
-Idea:      {name} — {one-line summary}
-Direction: {selected direction}
-Stage:     {current stage}
-Docs:      DECISIONS.md ✅ | RESEARCH.md {✅/missing} | PRD.md {✅/missing} | ARCHITECTURE.md {✅/missing} | BUILD_PLAN.md {✅/missing}
-```
+If no ideas exist, tell the user to run `/new-idea` first.
 
-4. Determine the next stage automatically based on which docs exist in `docs/{idea.name}/`:
-   - No `RESEARCH.md` → next stage is **4: Research**
-   - `RESEARCH.md` exists, no `PRD.md` → next stage is **5: PRD**
-   - `PRD.md` exists, no `ARCHITECTURE.md` → next stage is **6: Architecture**
-   - `ARCHITECTURE.md` exists, no `BUILD_PLAN.md` → next stage is **7: Build Plan**
-   - All docs exist → everything is complete, tell the user
+### 2. Select Idea
+If multiple ideas exist, show them and ask the user to pick one.
 
-5. Tell the user: **"Next up: Stage {N} — {name}. Want to continue, or jump to a different stage?"**
+### 3. Validate Stage
+The idea must be at stage `reviewed` with `verdict: approved` (or later). If not:
+- Stage < reviewed: Tell user to run `/advance` to complete earlier stages
+- Verdict != approved: Tell user the idea was not approved
 
-   Only offer a choice if they want to deviate. Otherwise proceed immediately on confirmation.
+### 4. Resume Pipeline
+Run `/advance` from the current stage. This picks up wherever the idea left off:
+- `reviewed` → researcher-4
+- `researched` → prd-writer-5
+- `prd_written` → arch-writer-6
+- `arch_written` → plan-writer-7
+- `plan_written` → doc-pusher-8
 
----
-
-## Stage 4: Research
-
-Follow `agents/researcher-4.md` in full.
-
-When research is complete, follow `agents/project-manager.md` with this scope:
-- Document any decisions or direction changes surfaced by the research
-- Note competitors that influenced scope, features cut or added, risks accepted
-- Append a **Research Decisions** section to `docs/{idea.name}/DECISIONS.md`
-- Skip this step if research produced no changes to prior decisions
-
----
-
-## Stage 5: PRD
-
-Follow `agents/prd-writer-5.md` in full.
-
----
-
-## Stage 6: Architecture
-
-Follow `agents/arch-writer-6.md` in full.
-
----
-
-## Stage 7: Build Plan
-
-Follow `agents/plan-writer-7.md` in full.
-
-When the build plan is confirmed, run the full `agents/project-manager.md` to finalize `docs/{idea.name}/DECISIONS.md` — incorporating PRD, architecture, and build plan decisions.
+Each step follows the `/advance` flow (checkpoint → agent → cross-cutting → feedback).

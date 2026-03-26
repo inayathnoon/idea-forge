@@ -1,0 +1,88 @@
+{
+  "stage": "raw",
+  "timestamp": "2026-03-26T03:55:18.161541",
+  "checkpoint_name": "raw_2026-03-26_03-55-18",
+  "ideas_store": {
+    "ideas": [
+      {
+        "name": "learnbridge",
+        "full_name": "LearnBridge \u2014 App-First Learning Companion",
+        "problem": "Children studying alone after school (ages 6\u20139, CBSE 5th) struggle silently when they get stuck on concepts like algebra. Parents are unavailable during study hours \u2014 not unwilling. Kids lose interest, pretend to understand, or get sent to tuition which feels like more school and breeds resistance.",
+        "solution": "A web app that teaches CBSE 5th grade algebra through illustrated step-by-step walkthroughs + quizzes. It detects when a child is stuck using time-on-task and consecutive wrong answers, gives the child a 1-minute nudge timer first, then alerts the parent via WhatsApp if the child still does not progress. The parent receives guided prompts to support \u2014 not teach \u2014 the child through the specific stuck point.",
+        "target_users": "Primary: Children (CBSE 5th grade, ~10\u201311 years) studying independently on a browser. Secondary: Working parents who want to help but are unavailable to monitor \u2014 reached via WhatsApp alerts.",
+        "tech_stack": {
+          "language": "TypeScript",
+          "framework": "React (child web app)",
+          "database": "PostgreSQL via Supabase",
+          "infra": "Vercel (web) + Supabase (auth + db + realtime) + WhatsApp Business API (parent alerts)",
+          "other": [
+            "Illustrated step-by-step walkthrough content (CBSE 5th algebra)",
+            "Adaptive quiz engine",
+            "Extensible progress-detection event system"
+          ]
+        },
+        "mvp_features": [
+          {
+            "title": "Illustrated Step-by-Step Walkthroughs",
+            "description": "Static illustrated walkthroughs covering CBSE 5th grade algebra topics. Each concept broken into steps with illustrations. No video production required.",
+            "priority": "high"
+          },
+          {
+            "title": "Adaptive Quiz Engine",
+            "description": "Quizzes after each walkthrough to test understanding. Tracks correct/incorrect streaks per session.",
+            "priority": "high"
+          },
+          {
+            "title": "Adaptive Quiz Engine + Stuck Detection",
+            "description": "4-level question system per subsection (1=easiest, 4=hardest). Child starts at L3. Correct \u2192 advances to L4 \u2192 passes stage. Wrong \u2192 shown explanation + retry at same level. Parent is nudged only when child exhausts all retry paths (fails L3 retry OR fails L4 retry). Stuck detection is embedded in level progression \u2014 no time-based thresholds.",
+            "priority": "high"
+          },
+          {
+            "title": "Parent WhatsApp Alert",
+            "description": "WhatsApp message to parent when child remains stuck after the nudge timer. Message includes topic name and stuck signal that triggered it.",
+            "priority": "high"
+          },
+          {
+            "title": "Parent Guided Prompt (via WhatsApp)",
+            "description": "WhatsApp message with a simple coaching script \u2014 what to say/ask the child to help them through the stuck point. Not full teaching, just targeted prompts.",
+            "priority": "high"
+          },
+          {
+            "title": "Progress Dashboard",
+            "description": "Web dashboard showing completed sessions, quiz scores over time, and which topics triggered alerts. Accessible to both child and parent using the shared account. Link to dashboard is included in WhatsApp stuck alerts.",
+            "priority": "medium"
+          },
+          {
+            "title": "Subscription + Auth",
+            "description": "Monthly subscription. One shared account per family (child and parent use the same login). Signup captures parent email + WhatsApp number. No separate parent account.",
+            "priority": "medium"
+          }
+        ],
+        "success_metrics": [
+          "% of sessions completed without parent alert",
+          "Quiz score improvement per topic across attempts",
+          "Parent WhatsApp response rate and response time",
+          "Week-4 subscription retention rate",
+          "Average sessions per week per child"
+        ],
+        "constraints": "Solo founder building MVP with AI agents. Web for child (browser), WhatsApp for parent alerts. CBSE 5th grade algebra as the only subject at launch. No team, no external budget \u2014 lean and fast.",
+        "repo_topics": [
+          "edtech",
+          "cbse",
+          "algebra",
+          "adaptive-learning",
+          "parent-alerts",
+          "whatsapp",
+          "india",
+          "learning-companion",
+          "react",
+          "supabase"
+        ],
+        "stage": "built",
+        "github_url": "https://github.com/inayathnoon/learnbridge",
+        "updated_at": "2026-03-02T13:21:00.000000",
+        "created_at": "2026-03-01T11:12:02.919002"
+      }
+    ]
+  }
+}
